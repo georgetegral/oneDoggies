@@ -78,6 +78,7 @@ body {
           animation: grow 0.1s infinite alternate;
 }
 
+/* Figure between the eyes */
 .eyes {
   background: #fff;
   width: 20px;
