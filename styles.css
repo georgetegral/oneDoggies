@@ -1,6 +1,6 @@
 html,
 body {
-  background: #1d4569;
+  background: #D8BFD8;
   height: 100%;
   width: 100%;
 }
@@ -14,7 +14,8 @@ body {
 }
 
 .body {
-  background: #60c8e7;
+  /* background: #60c8e7; */ /*Primary color */
+  background: #CC6600;
   border-radius: 300px 300px 0 0;
   height: 300px;
 }
@@ -22,14 +23,15 @@ body {
 .beard {
   width: 55px;
   height: 65px;
-  background: #087ba5;
+  /* background: #087ba5; */ /*Secondary color */
+  background: #994C00;
   margin: 0 auto;
   border-radius: 20px;
   position: relative;
 }
 .beard:after {
   content: "";
-  background: #087ba5;
+  background: #994C00;
   width: 26px;
   height: 13px;
   border-radius: 0 0 25px 25px;
@@ -107,7 +109,8 @@ body {
 
 .belt {
   height: 30px;
-  background: #ff6b5a;
+  /* background: #ff6b5a; */ /*Belt color */
+  background: #FF007F;
   margin-top: 20px;
   position: relative;
 }
@@ -122,7 +125,8 @@ body {
 .belt .dot {
   width: 10px;
   height: 10px;
-  background: #fff;
+  /* background: #fff; */ /* Belt dots */
+  background: #05F7EF;
   position: absolute;
   border-radius: 50%;
   top: 0;
@@ -146,7 +150,7 @@ body {
   position: absolute;
   width: 5px;
   height: 10px;
-  background: #fff;
+  background: #05F7EF;
   top: 0;
   bottom: 0;
   margin: auto;
@@ -184,7 +188,7 @@ body {
   display: inline-block;
   content: "";
   position: absolute;
-  background: #087ba5;
+  background: #994C00;
   width: 45px;
 }
 .legs:before {
@@ -198,7 +202,7 @@ body {
   display: inline;
   width: 12px;
   height: 55px;
-  background: #087ba5;
+  background: #994C00;
   position: absolute;
   bottom: 0;
 }
@@ -207,7 +211,7 @@ body {
   content: "";
   width: 28px;
   height: 12px;
-  background: #60c8e7;
+  background: #CC6600;
   border-radius: 20px 20px 0 0;
   display: inline-block;
   bottom: 0;
@@ -237,19 +241,19 @@ body {
 .ears:after, .ears:before {
   content: "";
   display: inline-block;
-  background: #087ba5;
+  background: #994C00;
   width: 40px;
   height: 90px;
   border-radius: 100% 100% 0 0;
 }
 .ears:after {
   transform: translateX(40px);
-  border: 10px solid #60c8e7;
+  border: 10px solid #CC6600;
   box-sizing: border-box;
 }
 
 .tail {
-  background: #60c8e7;
+  background: #CC6600;
   width: 14px;
   height: 80px;
   position: absolute;
@@ -265,8 +269,8 @@ body {
 }
 
 .tag {
-  border-left: 5px solid #ff6b5a;
-  border-bottom: 5px solid #ff6b5a;
+  border-left: 5px solid #FF007F;
+  border-bottom: 5px solid #FF007F;
   width: 80%;
   height: 161px;
   z-index: 2;
