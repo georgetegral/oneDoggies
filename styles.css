@@ -272,7 +272,7 @@ body {
 .tag {
   border-left: 5px solid #FF007F;
   border-bottom: 5px solid #FF007F;
-  width: 80%;
+  width: 60%;
   height: 161px;
   z-index: 2;
   position: absolute;
