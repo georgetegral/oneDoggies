@@ -6,6 +6,8 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { Web3ReactProvider } from '@web3-react/core'
 import { getLibrary } from './config/web3';
 
+import "./doggiestyles.css";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -16,7 +18,5 @@ root.render(
         </Web3ReactProvider>
       </ChakraProvider>
     </HashRouter>
-    
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
