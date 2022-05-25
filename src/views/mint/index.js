@@ -36,7 +36,6 @@ import {
     const sliderSmallMaxValue = 9;
 
     function randomDoggie(){
-      console.log("randomDoggie")
       setPrimaryColor(Math.floor(Math.random() * 90) + 10);
       setSecondaryColor(Math.floor(Math.random() * 90) + 10);
       setStomachColor(Math.floor(Math.random() * 90) + 10);
@@ -96,6 +95,7 @@ import {
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setPrimaryColor(val)}
+                value={primaryColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -110,6 +110,7 @@ import {
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setSecondaryColor(val)}
+                value={secondaryColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -124,6 +125,7 @@ import {
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setStomachColor(val)}
+                value={stomachColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -138,6 +140,7 @@ import {
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setBackgroundColor(val)}
+                value={backgroundColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -152,6 +155,7 @@ import {
                 min={1}
                 max={2}
                 onChange={(val) => setLocketColor(val)}
+                value={locketColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -166,6 +170,7 @@ import {
                 min={3}
                 max={sliderSmallMaxValue}
                 onChange={(val) => setBeltColor(val)}
+                value={beltColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -180,6 +185,7 @@ import {
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setDotsColor(val)}
+                value={dotsColor}
             >
               <SliderTrack>
                   <SliderFilledTrack />
@@ -194,6 +200,7 @@ import {
                 min={sliderSmallMinValue}
                 max={3}
                 onChange={(val) => setAnimationType(val)}
+                value={animationType}
             >
               <SliderTrack>
                   <SliderFilledTrack />
