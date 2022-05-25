@@ -30,6 +30,19 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
         background: "#"+colors[secondaryColor]
     }
 
+    if (animationType == 1 || animationType == 3){
+        var tongueStyle = {
+            WebkitAnimation: "grow 0.1s infinite alternate",
+              animation: "grow 0.1s infinite alternate"
+        }
+    }
+    else {
+        var tongueStyle = {
+            WebkitAnimation: "grow 0s infinite alternate",
+              animation: "grow 0s infinite alternate"
+        }
+    }
+
     var beltStyle = {
         background: "#"+colors[beltColor]
     }
@@ -51,10 +64,21 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
         borderBottom: "5px solid #"+colors[beltColor]
     }
 
-    var tailStyle = {
-        background: "#"+colors[primaryColor]
+    if (animationType == 1 || animationType == 2){
+        var tailStyle = {
+            background: "#"+colors[primaryColor],
+            WebkitAnimation: "shake 0.08s infinite alternate",
+              animation: "shake 0.08s infinite alternate"
+        }
     }
-
+    else {
+        var tailStyle = {
+            background: "#"+colors[primaryColor],
+            WebkitAnimation: "shake 0s infinite alternate",
+              animation: "shake 0s infinite alternate"
+        }
+    }
+    
     var legBackStyle = {
         background: "#"+colors[secondaryColor]
     }
@@ -73,7 +97,7 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
                   <div className="beard" style={beardStyle}>
                     <div className="beardafter" style={beardAfterStyle}></div>
                     <div className="mouth">
-                      <div className="tongue"></div>
+                      <div className="tongue" style={tongueStyle}></div>
                     </div>
                   </div>
                   <div className="belt" style={beltStyle}>
