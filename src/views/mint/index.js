@@ -52,24 +52,21 @@ import {
           <Box>
             <DoggieCard></DoggieCard>
           </Box>
-          <Text>DNA: {primaryColor}{secondaryColor}{stomachColor}{backgroundColor}{locketColor}{beltColor}{dotsColor}{animationType}</Text>
+          
         </Stack>
         
-        <Stack
-          
-          w={"full"}
-        >
-          <Heading
-            lineHeight={1.1}
-            fontWeight={600}
-            fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
-          >
-            <Text as={"span"} color={"blue.400"}>
-              Select your Doggie's attributes
-            </Text>
-          </Heading>
-          
-          <Box paddingRight={1}>
+        <Stack w={"full"}>
+        
+          <Box paddingLeft={1} paddingRight={5}>
+            <Heading
+              lineHeight={1.1}
+              fontWeight={600}
+              fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
+            >
+              <Text as={"span"} color={"blue.400"}>
+                Select your Doggie's attributes!
+              </Text>
+            </Heading>
             <Text>Primary Color: {primaryColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
@@ -131,7 +128,7 @@ import {
                 aria-label='slider-ex-1' 
                 defaultValue={1}
                 min={sliderSmallMinValue}
-                max={sliderSmallMaxValue}
+                max={5}
                 onChange={(val) => setLocketColor(val)}
             >
               <SliderTrack>
@@ -173,7 +170,7 @@ import {
                 aria-label='slider-ex-1' 
                 defaultValue={1}
                 min={sliderSmallMinValue}
-                max={sliderSmallMaxValue}
+                max={3}
                 onChange={(val) => setAnimationType(val)}
             >
               <SliderTrack>
@@ -181,6 +178,12 @@ import {
               </SliderTrack>
               <SliderThumb />
             </Slider>
+            
+            <Box display='flex'>
+              <Text>DNA: {primaryColor}{secondaryColor}{stomachColor}{backgroundColor}{locketColor}{beltColor}{dotsColor}{animationType}</Text>
+              <Button colorScheme='blue' marginLeft={"auto"} size="lg">Mint!</Button>
+            </Box>
+            
           </Box>
 
         </Stack>
