@@ -226,7 +226,7 @@
 
 .ears {
   position: relative;
-  top: 65px;
+  top: 70px;
 }
 
 .ears:after, .ears:before {
@@ -247,10 +247,9 @@
   background: #CC6600;
   width: 14px;
   height: 80px;
-  position: absolute;
-  z-index: -1;
-  right: 10px;
-  bottom: 40px;
+  position: relative;
+  left: 100px;
+  bottom: 120px;
   transform: rotate(30deg);
   border-radius: 14px;
   transform-origin: bottom;

@@ -12,6 +12,7 @@ import {
     Badge,
     Link as LinkChakra
   } from "@chakra-ui/react";
+  import DoggieCard from "../../components/doggie-card";
   import { ExternalLinkIcon } from '@chakra-ui/icons'
   import { Link } from "react-router-dom";
   import { useWeb3React } from "@web3-react/core";
@@ -102,45 +103,46 @@ import {
       </Box>
     </Center>
     */
-    <Flex minH="100vh" direction="column">
-     <Center>
-        <Box p="5" borderWidth="2px">
-          <Box paddingLeft={59} paddingRight={59} borderWidth="2px" backgroundColor={"#D8BFD8"}>
-            <div className="ears"></div>
-            <div className="dog">
-                <div className="body">
-                  <div className="eyes"></div>
-                  <div className="beard">
-                    <div className="mouth">
-                      <div className="tongue"></div>
-                    </div>
-                  </div>
-                  <div className="belt">
-                    <div className="locket"></div>
-                    <div className="dot dot1"></div>
-                    <div className="dot dot2"></div>
-                    <div className="dot dot3"></div>
-                    <div className="dot dot4"></div>
-                    <div className="tag"></div>
-                  </div>
-                  <div className="stomach">
-                  </div>
-                  <div className="legs">
-                    <div className="left"></div>
-                    <div className="right"></div>
-                  </div>
-                </div>
-                <div className="tail"></div>
-              </div>
-              
-            </Box>
-            
-            
+    <Stack direction="column">
+      <Heading
+        lineHeight={1.1}
+        fontWeight={600}
+        fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+      >
+        <Text as={"span"} color={"blue.400"}>
+          Mint your Doggie!
+        </Text>
+      </Heading>
+
+     <Center borderWidth="2px">
+      <Stack p="5" spacing={{ base: 5, md: 1 }}>
+        <Box>
+          <DoggieCard></DoggieCard>
         </Box>
+        <Text>DNA: </Text>
+      </Stack>
+        
+        <Stack
+          spacing={{ base: 8, md: 10 }}
+          py={{ base: 20, md: 28 }}
+          w={"full"}
+        >
+          <Heading
+            lineHeight={1.1}
+            fontWeight={600}
+            fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
+          >
+            <Text as={"span"} color={"blue.400"}>
+              Select your Doggie Attributes
+            </Text>
+          </Heading>
+          <Text>woaah</Text>
+        </Stack>
 
-        </Center>
+      </Center>
 
-    </Flex>
+      
+    </Stack>
 
     );
   };
