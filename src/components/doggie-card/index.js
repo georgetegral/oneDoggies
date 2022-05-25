@@ -46,8 +46,21 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
         background: "#"+colors[stomachColor]
     }
 
+    var tagStyle = {
+        borderLeft: "5px solid #"+colors[beltColor],
+        borderBottom: "5px solid #"+colors[beltColor]
+    }
+
     var tailStyle = {
-        
+        background: "#"+colors[primaryColor]
+    }
+
+    var legBackStyle = {
+        background: "#"+colors[secondaryColor]
+    }
+
+    var legFrontStyle = {
+        background: "#"+colors[primaryColor]
     }
 
     return (
@@ -71,18 +84,20 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
                     <div className="dot dot4" style={dotStyle}></div>
                     <div className="beltdotbefore" style={dotStyle}></div>
                     <div className="beltdotafter" style={dotStyle}></div>
-                    <div className="tag"></div>
+                    <div className="tag" style={tagStyle}></div>
                   </div>
                   <div className="stomach" style={stomachStyle}>
                   </div>
-                  <div className="legs">
-                    <div className="left"></div>
-                    <div className="right"></div>
-                  </div>
+                  <div className="upperleftleg" style={legBackStyle}></div>
+                  <div className="backleftleg" style={legBackStyle}></div>
+                  <div className="upperrightleg" style={legBackStyle}></div>
+                  <div className="backrightleg" style={legBackStyle}></div>
+                  <div className="frontleftleg" style={legFrontStyle}></div>
+                  <div className="frontrightleg" style={legFrontStyle}></div>
                 </div>
                 
               </div>
-            <div className="tail"></div>
+            <div className="tail" style={tailStyle}></div>
           </Box>
     )
 }

@@ -163,7 +163,6 @@
   border-radius: 0 10px 10px 0;
 }
 
-
 .stomach {
   width: 56px;
   height: 130px;
@@ -176,61 +175,65 @@
   border-radius: 120px 120px 0 0;
 }
 
-.legs {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 12px;
+.upperleftleg {
+  width: 12px;
+  height: 55px;
+  background: #994C00;
+  border-radius: 20px 0 0 0;
+  transform: translateX(-12px) translateY(106px);
 }
-.legs:before, .legs:after {
+
+.upperrightleg {
+  width: 12px;
+  height: 55px;
+  background: #994C00;
+  position: relative;
+  border-radius: 0 20px 0 0;
+  transform: translateX(120px) translateY(27px);
+}
+
+.backleftleg {
   height: 12px;
   border-radius: 20px 20px 0 0;
   display: inline-block;
   content: "";
-  position: absolute;
+  position: relative;
   background: #994C00;
   width: 45px;
+  transform: translateX(-45px) translateY(88px);
 }
-.legs:before {
-  left: -37px;
-}
-.legs:after {
-  right: -37px;
-}
-.legs .left,
-.legs .right {
-  display: inline;
-  width: 12px;
-  height: 55px;
+
+.backrightleg {
+  height: 12px;
+  border-radius: 20px 20px 0 0;
+  display: inline-block;
+  content: "";
+  position: relative;
   background: #994C00;
-  position: absolute;
-  bottom: 0;
+  width: 45px;
+  transform: translateX(120px) translateY(9px);
 }
-.legs .left:before,
-.legs .right:before {
+
+.frontleftleg {
   content: "";
   width: 28px;
   height: 12px;
   background: #CC6600;
   border-radius: 20px 20px 0 0;
   display: inline-block;
-  bottom: 0;
-  position: absolute;
+  position: relative;
+  transform: translateX(-58px) translateY(9px);
 }
-.legs .left {
-  left: -12px;
-  border-radius: 20px 0 0 0;
-}
-.legs .left:before {
-  transform: translateX(-1px);
-}
-.legs .right {
-  right: -12px;
-  border-radius: 0 20px 0 0;
-  z-index: 1;
-}
-.legs .right:before {
-  transform: translateX(-13px);
+
+.frontrightleg {
+  content: "";
+  width: 28px;
+  height: 12px;
+  background: #CC6600;
+  border-radius: 20px 20px 0 0;
+  display: inline-block;
+  position: relative;
+  transform: translateX(33px) translateY(9px);
 }
 
 .leftear {
