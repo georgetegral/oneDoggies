@@ -9,8 +9,13 @@ import colors from "../../components/colors";
 
 const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor, locketColor, beltColor, dotsColor, animationType, secret}) => {
     
-    var earsStyle = {
-        
+    var leftEarStyle = {
+        background: "#"+colors[secondaryColor]
+    }
+
+    var rightEarStyle = {
+        background: "#"+colors[secondaryColor],
+        border: "10px solid #"+colors[primaryColor]
     }
 
     var bodyStyle = {
@@ -47,7 +52,8 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
 
     return (
         <Box paddingLeft={59} paddingRight={59} borderWidth="1px" backgroundColor={"#"+colors[backgroundColor]}>
-            <div className="ears" style={earsStyle}></div>
+            <div className="leftear" style={leftEarStyle}></div>
+            <div className="rightear" style={rightEarStyle}></div>
             <div className="dog">
                 <div className="body" style={bodyStyle}>
                   <div className="eyes" style={stomachStyle}></div>
