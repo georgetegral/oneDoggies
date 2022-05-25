@@ -19,7 +19,7 @@
   border-radius: 20px;
   position: relative;
 }
-.beard:after {
+.beardafter {
   content: "";
   background: #994C00;
   width: 26px;
@@ -105,7 +105,7 @@
   margin-top: 20px;
   position: relative;
 }
-.belt .locket {
+.locket {
   width: 30px;
   height: 30px;
   background: #ffc442;
@@ -136,7 +136,8 @@
 .belt .dot.dot4 {
   margin-left: 100px;
 }
-.belt:before, .belt:after {
+
+.beltdotbefore {
   content: "";
   position: absolute;
   width: 5px;
@@ -145,15 +146,23 @@
   top: 0;
   bottom: 0;
   margin: auto;
-}
-.belt:before {
   left: -5px;
   border-radius: 10px 0 0 10px;
 }
-.belt:after {
+
+.beltdotafter {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  background: #05F7EF;
+  top: 0;
+  bottom: 0;
+  margin: auto;
   right: -5px;
   border-radius: 0 10px 10px 0;
 }
+
 
 .stomach {
   width: 56px;

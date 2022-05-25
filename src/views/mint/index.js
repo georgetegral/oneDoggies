@@ -21,12 +21,12 @@ import {
   
   const Mint = () => {
     const [primaryColor, setPrimaryColor] = useState(10);
-    const [secondaryColor, setSecondaryColor] = useState(10);
-    const [stomachColor, setStomachColor] = useState(10);
-    const [backgroundColor, setBackgroundColor] = useState(10);
+    const [secondaryColor, setSecondaryColor] = useState(11);
+    const [stomachColor, setStomachColor] = useState(12);
+    const [backgroundColor, setBackgroundColor] = useState(13);
     const [locketColor, setLocketColor] = useState(1);
-    const [beltColor, setBeltColor] = useState(1);
-    const [dotsColor, setDotsColor] = useState(1);
+    const [beltColor, setBeltColor] = useState(2);
+    const [dotsColor, setDotsColor] = useState(3);
     const [animationType, setAnimationType] = useState(1);
     const [secret, setSecret] = useState(1);
 
@@ -50,7 +50,17 @@ import {
      <Center borderWidth="2px">
         <Stack p="3" >
           <Box>
-            <DoggieCard></DoggieCard>
+            <DoggieCard 
+              primaryColor={primaryColor} 
+              secondaryColor={secondaryColor} 
+              stomachColor={stomachColor} 
+              backgroundColor={backgroundColor}
+              locketColor={locketColor}
+              beltColor={beltColor}
+              dotsColor={dotsColor}
+              animationType={animationType}
+              secret={secret}
+            ></DoggieCard>
           </Box>
           
         </Stack>
@@ -84,7 +94,7 @@ import {
             <Text>Secondary Color: {secondaryColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={10}
+                defaultValue={11}
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setSecondaryColor(val)}
@@ -98,7 +108,7 @@ import {
             <Text>Stomach Color: {stomachColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={10}
+                defaultValue={12}
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setStomachColor(val)}
@@ -112,7 +122,7 @@ import {
             <Text>Background Color: {backgroundColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={10}
+                defaultValue={13}
                 min={sliderMinValue}
                 max={sliderMaxValue}
                 onChange={(val) => setBackgroundColor(val)}
@@ -140,8 +150,8 @@ import {
             <Text>Belt Color: {beltColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={1}
-                min={sliderSmallMinValue}
+                defaultValue={2}
+                min={2}
                 max={sliderSmallMaxValue}
                 onChange={(val) => setBeltColor(val)}
             >
@@ -154,7 +164,7 @@ import {
             <Text>Dots Color: {dotsColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={1}
+                defaultValue={3}
                 min={sliderSmallMinValue}
                 max={sliderSmallMaxValue}
                 onChange={(val) => setDotsColor(val)}
