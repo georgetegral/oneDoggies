@@ -25,8 +25,8 @@ import {
     const [stomachColor, setStomachColor] = useState(12);
     const [backgroundColor, setBackgroundColor] = useState(13);
     const [locketColor, setLocketColor] = useState(1);
-    const [beltColor, setBeltColor] = useState(2);
-    const [dotsColor, setDotsColor] = useState(3);
+    const [beltColor, setBeltColor] = useState(3);
+    const [dotsColor, setDotsColor] = useState(23);
     const [animationType, setAnimationType] = useState(1);
     const [secret, setSecret] = useState(1);
 
@@ -34,6 +34,18 @@ import {
     const sliderMaxValue = 99;
     const sliderSmallMinValue = 1;
     const sliderSmallMaxValue = 9;
+
+    function randomDoggie(){
+      console.log("randomDoggie")
+      setPrimaryColor(Math.floor(Math.random() * 90) + 10);
+      setSecondaryColor(Math.floor(Math.random() * 90) + 10);
+      setStomachColor(Math.floor(Math.random() * 90) + 10);
+      setBackgroundColor(Math.floor(Math.random() * 90) + 10);
+      setLocketColor(Math.floor(Math.random() * 2) + 1);
+      setBeltColor(Math.floor(Math.random() * 7) + 3);
+      setDotsColor(Math.floor(Math.random() * 90) + 10);
+      setAnimationType(Math.floor(Math.random() * 3) + 1);
+    }
 
     return (
     <Stack direction="column">
@@ -137,8 +149,8 @@ import {
             <Slider 
                 aria-label='slider-ex-1' 
                 defaultValue={1}
-                min={sliderSmallMinValue}
-                max={5}
+                min={1}
+                max={2}
                 onChange={(val) => setLocketColor(val)}
             >
               <SliderTrack>
@@ -150,8 +162,8 @@ import {
             <Text>Belt Color: {beltColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={2}
-                min={2}
+                defaultValue={3}
+                min={3}
                 max={sliderSmallMaxValue}
                 onChange={(val) => setBeltColor(val)}
             >
@@ -164,9 +176,9 @@ import {
             <Text>Dots Color: {dotsColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
-                defaultValue={3}
-                min={sliderSmallMinValue}
-                max={sliderSmallMaxValue}
+                defaultValue={23}
+                min={sliderMinValue}
+                max={sliderMaxValue}
                 onChange={(val) => setDotsColor(val)}
             >
               <SliderTrack>
@@ -190,6 +202,7 @@ import {
             </Slider>
             
             <Box display='flex'>
+              <Button colorScheme='green' marginRight={"auto"} size="lg" onClick={() => randomDoggie()}>Random</Button>
               <Text>DNA: {primaryColor}{secondaryColor}{stomachColor}{backgroundColor}{locketColor}{beltColor}{dotsColor}{animationType}</Text>
               <Button colorScheme='blue' marginLeft={"auto"} size="lg">Mint!</Button>
             </Box>
