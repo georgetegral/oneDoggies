@@ -4,6 +4,7 @@ import {
     Heading,
     Text,
     Button,
+    ButtonGroup,
     Box,
     useToast,
     useColorModeValue,
@@ -44,6 +45,17 @@ import {
       setBeltColor(Math.floor(Math.random() * 7) + 3);
       setDotsColor(Math.floor(Math.random() * 90) + 10);
       setAnimationType(Math.floor(Math.random() * 3) + 1);
+    }
+
+    function baseDoggie(){
+      setPrimaryColor(10);
+      setSecondaryColor(11);
+      setStomachColor(12);
+      setBackgroundColor(13);
+      setLocketColor(1);
+      setBeltColor(3);
+      setDotsColor(23);
+      setAnimationType(1);
     }
 
     return (
@@ -209,8 +221,12 @@ import {
             </Slider>
             
             <Box display='flex'>
-              <Button colorScheme='green' marginRight={"auto"} size="lg" onClick={() => randomDoggie()}>Random</Button>
-              <Text>DNA: {primaryColor}{secondaryColor}{stomachColor}{backgroundColor}{locketColor}{beltColor}{dotsColor}{animationType}</Text>
+              <ButtonGroup>
+                <Button colorScheme='green' size="lg" onClick={() => randomDoggie()}>Random</Button>
+                <Button colorScheme='teal' size="lg" onClick={() => baseDoggie()}>Base</Button>
+              </ButtonGroup>
+              
+              <Text marginLeft={"auto"}>DNA: {primaryColor}{secondaryColor}{stomachColor}{backgroundColor}{locketColor}{beltColor}{dotsColor}{animationType}</Text>
               <Button colorScheme='blue' marginLeft={"auto"} size="lg">Mint!</Button>
             </Box>
             

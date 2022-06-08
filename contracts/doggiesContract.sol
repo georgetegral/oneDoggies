@@ -18,7 +18,7 @@ contract DoggiesContract is IERC721 {
     }
 
     Doggie[] doggies;
-    mapping(uint256 => address) public kittyIndexToOwner;
+    mapping(uint256 => address) public doggieIndexToOwner;
     mapping(address => uint256) ownershipTokenCount;
 
     function balanceOf(address owner) external view returns (uint256 balance){
