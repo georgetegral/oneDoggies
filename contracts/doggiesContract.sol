@@ -3,9 +3,11 @@
 pragma solidity ^0.8.0;
 
 import "./IERC721.sol";
+import "./Ownable.sol";
 
-contract DoggiesContract is IERC721 {
+contract DoggiesContract is IERC721, Ownable {
 
+    uint256 public constant CREATION_LIMIT_GEN0 = 100;
     string public constant name = "ONEDoggies";
     string public constant symbol = "DOGGIES";
 
@@ -28,6 +30,15 @@ contract DoggiesContract is IERC721 {
     Doggie[] doggies;
     mapping(uint256 => address) public doggieIndexToOwner;
     mapping(address => uint256) ownershipTokenCount;
+
+    uint256 public gen0Counter;
+
+    function createDoggieGen0(uint256 _genes) public onlyOwner returns (uint256) {
+        require(gen0Counter < CREATION_LIMIT_GEN0);
+        gen0Counter++;
+        //Gen 0 have no owners, they are owned by the contract
+        return _createDoggie(0,0,0,_genes, msg.sender);
+    }
 
     function _createDoggie(uint256 _momId, uint256 _dadId, uint256 _generation, uint256 _genes, address _owner) private returns (uint256) {
         Doggie memory _doggie = Doggie({
