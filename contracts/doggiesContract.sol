@@ -33,6 +33,23 @@ contract DoggiesContract is IERC721, Ownable {
 
     uint256 public gen0Counter;
 
+    function getDoggie(uint256 _id) external view returns (
+        uint256 genes,
+        uint256 birthTime,
+        uint256 momId,
+        uint256 dadId,
+        uint256 generation
+    ){
+        Doggie storage doggie = doggies[_id]; //pointer, uses less memory than "memory" as that would copy the value
+
+        genes = doggie.genes;
+        birthTime = uint256(doggie.birthTime);
+        momId = uint256(doggie.momId);
+        dadId = uint256(doggie.dadId);
+        generation = uint256(doggie.generation);
+        
+    }
+
     function createDoggieGen0(uint256 _genes) public onlyOwner returns (uint256) {
         require(gen0Counter < CREATION_LIMIT_GEN0);
         gen0Counter++;
