@@ -9,7 +9,7 @@ const RequestAccess = () => {
   return (
     <Alert status="error">
       <AlertIcon />
-      <AlertTitle mr={2}>Conecta tu wallet para acceder a la app</AlertTitle>
+      <AlertTitle mr={2}>Connect your wallet to access the app</AlertTitle>
       <CloseButton position="absolute" right="8px" top="8px" />
     </Alert>
   );
