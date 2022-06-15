@@ -17,10 +17,13 @@ import {
     SliderMark,
   } from "@chakra-ui/react";
   import DoggieCard from "../../components/doggie-card";
+  import useOneDoggies from "../../hooks/useOneDoggies";
   import { useWeb3React } from "@web3-react/core";
   import { useCallback, useEffect, useState } from "react";
   
   const Mint = () => {
+    const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
+
     const [primaryColor, setPrimaryColor] = useState(10);
     const [secondaryColor, setSecondaryColor] = useState(11);
     const [stomachColor, setStomachColor] = useState(12);
