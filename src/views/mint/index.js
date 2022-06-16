@@ -131,7 +131,7 @@ import {
             description: error.message,
             status: "error",
         })
-    })
+      })
 
       setIsMinting(false);
   }
@@ -144,7 +144,7 @@ import {
         fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
       >
         <Text as={"span"} color={"blue.400"}>
-         🐾Mint your Doggie!
+         Mint your Doggie! 🐾
         </Text>
       </Heading>
 
