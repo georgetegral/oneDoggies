@@ -38,6 +38,31 @@ contract DoggiesContract is IERC721, Ownable {
 
     uint256 public gen0Counter;
 
+    function approve(address _to, uint256 _tokenId) public {
+        require(_owns(msg.sender, _tokenId));
+
+        _approve(_tokenId, _to);
+        emit Approval(msg.sender, _to, _tokenId);
+    }
+
+    function setApprovalForAll(address operator, bool approved) public {
+        require(operator != msg.sender);
+
+        _operatorApprovals[msg.sender][operator] = approved;
+        emit ApprovalForAll(msg.sender, operator, approved);
+    }
+
+    //Getting the approved status of a token
+    function getApproved(uint256 tokenId) public view returns (address) {
+        require(tokenId < doggies.length); //Token must exist
+        return doggieIndexToApproved[tokenId];
+    }
+
+    //Getter for the operators
+    function isApprovedForAll(address owner, address operator) public view returns (bool){
+        return _operatorApprovals[owner][operator];
+    }
+
     function getDoggie(uint256 _id) external view returns (
         uint256 genes,
         uint256 birthTime,
@@ -104,6 +129,7 @@ contract DoggiesContract is IERC721, Ownable {
         
         if(_from != address(0)){
             ownershipTokenCount[_from]--;
+            delete doggieIndexToApproved[_tokenId]; //Delete approved address when a successful transfer is made
         }
 
         //Emit the transfer event
@@ -112,6 +138,10 @@ contract DoggiesContract is IERC721, Ownable {
 
     function _owns(address _claimant, uint256 _tokenId) internal view returns (bool){
         return doggieIndexToOwner[_tokenId] == _claimant;
+    }
+
+    function _approve(uint256 _tokenId, address _approved) internal {
+        doggieIndexToApproved[_tokenId] = _approved;
     }
 
 }
