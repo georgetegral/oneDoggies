@@ -31,6 +31,11 @@ contract DoggiesContract is IERC721, Ownable {
     mapping(uint256 => address) public doggieIndexToOwner;
     mapping(address => uint256) ownershipTokenCount;
 
+    mapping(uint256 => address) public doggieIndexToApproved;
+    //MYADDR => OPERATORADDR => TRUE/FALSE
+    //_operatorApprovals [MYADDR][OPERATORADDR]
+    mapping(address => mapping(address => bool)) private _operatorApprovals;
+
     uint256 public gen0Counter;
 
     function getDoggie(uint256 _id) external view returns (
