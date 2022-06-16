@@ -23,7 +23,11 @@ import {
   
   const Mint = () => {
     const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
+    //console.log(oneDoggies); //To get the method names
+    const { account } = useWeb3React();
+    const toast = useToast();
 
+    const [isMinting, setIsMinting] = useState(false);
     const [primaryColor, setPrimaryColor] = useState(10);
     const [secondaryColor, setSecondaryColor] = useState(11);
     const [stomachColor, setStomachColor] = useState(12);
@@ -60,6 +64,58 @@ import {
       setDotsColor(23);
       setAnimationType(1);
     }
+
+    const mint = () => {
+      var dna = primaryColor.toString() + secondaryColor.toString() + stomachColor.toString() + backgroundColor.toString() + locketColor.toString() + beltColor.toString() + dotsColor.toString() + animationType.toString() + secret.toString()
+      setIsMinting(true);
+
+      oneDoggies.methods
+      .createDoggieGen0(dna)
+      .send({
+          from: account
+          //value: 1e15
+      })
+      .on("transactionHash", (txHash) => {
+          toast({
+              title: "Transaction sent",
+              description: "Tx hash: "+txHash,
+              status: "info",
+          })
+      })
+      .on("receipt", () => {
+          toast({
+              title: "Transaction confirmed",
+              description: "Congrats! The transaction has been confirmed.",
+              status: "success",
+          })
+      })
+      .on("error", (error) => {
+          toast({
+              title: "Transaction failed",
+              description: error.message,
+              status: "error",
+          })
+      })
+
+      oneDoggies.events
+      .Birth().
+      on('data', function(event){
+        let doggieId = event.returnValues.doggieId
+        let dadId = event.returnValues.dadId
+        let momId = event.returnValues.momId
+        let genes = event.returnValues.genes
+        let owner = event.returnValues.owner
+      })
+      .on("error", (error) => {
+        toast({
+            title: "Mint failed",
+            description: error.message,
+            status: "error",
+        })
+    })
+
+      setIsMinting(false);
+  }
 
     return (
     <Stack direction="column">
@@ -230,7 +286,7 @@ import {
               </ButtonGroup>
               
               <Text marginLeft={"auto"}>DNA: {primaryColor}{secondaryColor}{stomachColor}{backgroundColor}{locketColor}{beltColor}{dotsColor}{animationType}</Text>
-              <Button colorScheme='blue' marginLeft={"auto"} size="lg">Mint!</Button>
+              <Button colorScheme='blue' marginLeft={"auto"} size="lg" disabled={!oneDoggies} onClick={mint} isLoading={isMinting}>Mint!</Button>
             </Box>
             
           </Box>
