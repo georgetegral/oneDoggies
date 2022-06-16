@@ -15,6 +15,14 @@ import {
     SliderFilledTrack,
     SliderThumb,
     SliderMark,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure
   } from "@chakra-ui/react";
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
@@ -26,6 +34,14 @@ import {
     //console.log(oneDoggies); //To get the method names
     const { account } = useWeb3React();
     const toast = useToast();
+
+    //Modal variables
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [ doggieId, setDoggieId ] = useState(0);
+    const [ momId, setMomId ] = useState(0);
+    const [ dadId, setDadId ] = useState(0);
+    const [ dnaMint, setDnaMint ] = useState(0);
+    const [ doggieOwner, setDoggieOwner ] = useState(0);
 
     const [isMinting, setIsMinting] = useState(false);
     const [primaryColor, setPrimaryColor] = useState(10);
@@ -100,11 +116,14 @@ import {
       oneDoggies.events
       .Birth().
       on('data', function(event){
-        let doggieId = event.returnValues.doggieId
-        let dadId = event.returnValues.dadId
-        let momId = event.returnValues.momId
-        let genes = event.returnValues.genes
-        let owner = event.returnValues.owner
+        setDoggieId(event.returnValues.doggieId);
+        setDadId(event.returnValues.dadId);
+        setMomId(event.returnValues.momId);
+        setDnaMint(event.returnValues.genes);
+        setDoggieOwner(event.returnValues.owner);
+
+        onOpen();
+
       })
       .on("error", (error) => {
         toast({
@@ -125,7 +144,7 @@ import {
         fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
       >
         <Text as={"span"} color={"blue.400"}>
-          Mint your Doggie!
+         🐾Mint your Doggie!
         </Text>
       </Heading>
 
@@ -294,6 +313,42 @@ import {
         </Stack>
 
       </Center>
+      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Doggie successfully minted!</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontWeight='bold' mb='1rem'>
+              Your doggie was successfully minted with the following atributes: 
+            </Text>
+            <Text>
+              ID: {doggieId}
+            </Text>
+            <Text>
+              Mom ID: {momId}
+            </Text>
+            <Text>
+              Dad ID: {dadId}
+            </Text>
+            <Text>
+              Genes: {dnaMint}
+            </Text>
+            <Text>
+              Owner (you!): {doggieOwner}
+            </Text>
+            <Text fontWeight='bold' mb='1rem'>
+              Congratulations! 🐶
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Stack>
     );
   };
