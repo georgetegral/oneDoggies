@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./IERC721.sol";
+import "./IERC721Receiver.sol";
 import "./Ownable.sol";
 
 contract DoggiesContract is IERC721, Ownable {
@@ -10,6 +11,8 @@ contract DoggiesContract is IERC721, Ownable {
     uint256 public constant CREATION_LIMIT_GEN0 = 100;
     string public constant name = "ONEDoggies";
     string public constant symbol = "DOGGIES";
+
+    bytes4 internal constant ERC721_RECEIVED = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
 
     event Birth(
         address owner, 
@@ -37,6 +40,11 @@ contract DoggiesContract is IERC721, Ownable {
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     uint256 public gen0Counter;
+
+    function _safeTransfer(address _from, address _to, uint256 _tokenId, bytes memory _data) internal{
+        _transfer(_from, _to, _tokenId);
+        require(_checkERC721Support(_from, _to, _tokenId, _data) );
+    }
 
     function transferFrom(address _from, address _to, uint256 _tokenId) public {
         require(_to != address(0));
@@ -158,6 +166,27 @@ contract DoggiesContract is IERC721, Ownable {
 
     function _approvedFor(address _claimant, uint256 _tokenId) internal view returns (bool) {
         return doggieIndexToApproved[_tokenId] == _claimant;
+    }
+
+    function _checkERC721Support(address _from, address _to, uint256 _tokenId, bytes memory _data) internal returns (bool) {
+        if(!_isContract(_to)){
+            return true;
+        }
+
+        //Call onERC721Received in the _to contract
+        bytes4 returnData = IERC721Receiver(_to).onERC721Received(msg.sender, _from, _tokenId, _data);
+        
+        //Check return value
+        return returnData == ERC721_RECEIVED;
+    }
+
+    function _isContract(address _to) view internal returns (bool){
+        //Solidity assembly language
+        uint32 size;
+        assembly{
+            size := extcodesize(_to)
+        }
+        return size > 0;
     }
 
 }
