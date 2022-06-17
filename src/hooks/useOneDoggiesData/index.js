@@ -21,6 +21,7 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
     const momId = doggieData.momId;
     const dadId = doggieData.dadId;
     const generation = doggieData.generation;
+    const doggieName = doggieData.doggieName;
 
     return {
         tokenId,
@@ -29,6 +30,7 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
         momId,
         dadId,
         generation,
+        doggieName,
         owner,
         ...metadata
     }

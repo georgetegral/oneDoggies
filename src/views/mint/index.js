@@ -135,7 +135,7 @@ import {
         setMomId(event.returnValues.momId);
         setDnaMint(event.returnValues.genes);
         setDoggieOwner(event.returnValues.owner);
-        setMintedName(event.returnValues.name);
+        setMintedName(event.returnValues.doggieName);
         onOpen();
 
       })

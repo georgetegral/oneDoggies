@@ -87,7 +87,7 @@ const Doggies = () =>{
             <Loading />
           ) : (
             <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
-              {doggies.map(({tokenId, attributes, dna, generation}) =>(
+              {doggies.map(({tokenId, attributes, doggieName, generation, dna}) =>(
                 <LinkBox key={tokenId}>
                     <LinkOverlay href={`#/doggies/${tokenId}`}>
                         <Box paddingLeft={5} paddingRight={5} borderWidth="1px">
@@ -103,10 +103,10 @@ const Doggies = () =>{
                                 secret={parseInt(attributes[0]['Secret'])}
                             />
                             <Box display='flex'>
-                                <Text>ONEDoggie #{tokenId}</Text>
+                                <Text>ONEDoggie #{tokenId} 🐾</Text>
                                 <Text marginLeft={"auto"}>Gen: {generation}</Text>
                             </Box>
-                            <Text>DNA: {dna} 🐾</Text>
+                            <Text>Name: {doggieName}</Text>
                         </Box>
                     </LinkOverlay>
                 </LinkBox>
