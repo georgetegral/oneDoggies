@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './views/home';
 import Mint from './views/mint';
 import Doggies from './views/doggies';
+import Doggie from './views/doggie';
 import MainLayout from "./layouts/main";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Home />}/>
         <Route path="/mint" element={<Mint />}/>
         <Route path="/doggies" element={<Doggies />}/>
+        <Route path="/doggies/:tokenId" element={<Doggie />}/>
       </Routes>
     </MainLayout>
     </>

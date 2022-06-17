@@ -9,7 +9,9 @@ import {
   FormHelperText,
   FormControl,
   Box,
-  Text
+  Text,
+  LinkBox,
+  LinkOverlay
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import DoggieCard from "../../components/doggie-card";
@@ -77,7 +79,7 @@ const Doggies = () =>{
                 </InputRightElement>
               </InputGroup>
               { submitted && !validAddress && (
-                <FormHelperText>Invalid Address</FormHelperText>
+                <FormHelperText>Invalid address</FormHelperText>
               )}
             </FormControl>
           </form>
@@ -86,24 +88,28 @@ const Doggies = () =>{
           ) : (
             <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
               {doggies.map(({tokenId, attributes, dna, generation}) =>(
-                  <Box paddingLeft={5} paddingRight={5} borderWidth="1px" key={tokenId}>
-                    <DoggieCard
-                        primaryColor={parseInt(attributes[0]['Primary Color'])} 
-                        secondaryColor={parseInt(attributes[0]['Secondary Color'])} 
-                        stomachColor={parseInt(attributes[0]['Stomach Color'])} 
-                        backgroundColor={parseInt(attributes[0]['Background Color'])}
-                        locketColor={parseInt(attributes[0]['Locket Color'])}
-                        beltColor={parseInt(attributes[0]['Belt Color'])}
-                        dotsColor={parseInt(attributes[0]['Dots Color'])}
-                        animationType={parseInt(attributes[0]['Animation Type'])}
-                        secret={parseInt(attributes[0]['Secret'])}
-                    />
-                    <Box display='flex'>
-                        <Text>ONEDoggie #{tokenId}</Text>
-                        <Text marginLeft={"auto"}>Gen: {generation}</Text>
-                    </Box>
-                    <Text>DNA: {dna} 🐾</Text>
-                  </Box>
+                <LinkBox key={tokenId}>
+                    <LinkOverlay href={`#/doggies/${tokenId}`}>
+                        <Box paddingLeft={5} paddingRight={5} borderWidth="1px">
+                            <DoggieCard
+                                primaryColor={parseInt(attributes[0]['Primary Color'])} 
+                                secondaryColor={parseInt(attributes[0]['Secondary Color'])} 
+                                stomachColor={parseInt(attributes[0]['Stomach Color'])} 
+                                backgroundColor={parseInt(attributes[0]['Background Color'])}
+                                locketColor={parseInt(attributes[0]['Locket Color'])}
+                                beltColor={parseInt(attributes[0]['Belt Color'])}
+                                dotsColor={parseInt(attributes[0]['Dots Color'])}
+                                animationType={parseInt(attributes[0]['Animation Type'])}
+                                secret={parseInt(attributes[0]['Secret'])}
+                            />
+                            <Box display='flex'>
+                                <Text>ONEDoggie #{tokenId}</Text>
+                                <Text marginLeft={"auto"}>Gen: {generation}</Text>
+                            </Box>
+                            <Text>DNA: {dna} 🐾</Text>
+                        </Box>
+                    </LinkOverlay>
+                </LinkBox>
               ))}
             </Grid>
           )}

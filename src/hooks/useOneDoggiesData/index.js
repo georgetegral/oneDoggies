@@ -24,7 +24,6 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
 
     return {
         tokenId,
-        tokenURI,
         dna,
         birthTime,
         momId,
@@ -35,6 +34,7 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
     }
 }
 
+//Plural
 const useOneDoggiesData = ({ owner = null} = {}) => {
     const [doggies, setDoggies] = useState([]);
     const { library } = useWeb3React();
@@ -50,7 +50,7 @@ const useOneDoggiesData = ({ owner = null} = {}) => {
 
                 const totalSupply = await oneDoggies.methods.totalSupply().call();
                 tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index);
-    
+
             } else {
                 const balanceOf = await oneDoggies.methods.balanceOf(owner).call();
                 
@@ -86,4 +86,33 @@ const useOneDoggiesData = ({ owner = null} = {}) => {
     };
 }
 
-export { useOneDoggiesData };
+//Individual
+const useOneDoggieData = (tokenId = null) => {
+    const [doggie, setDoggie] = useState({});
+    const [loading, setLoading] = useState(true);
+    const oneDoggies = useOneDoggies();
+  
+    const update = useCallback(async () => {
+      if (oneDoggies && tokenId != null) {
+        setLoading(true);
+  
+        const toSet = await getDoggieData({ tokenId, oneDoggies });
+        setDoggie(toSet);
+  
+        setLoading(false);
+      }
+    }, [oneDoggies, tokenId]);
+  
+    useEffect(() => {
+      update();
+    }, [update]);
+  
+    return {
+      loading,
+      doggie,
+      update,
+    };
+};
+  
+
+export { useOneDoggiesData, useOneDoggieData };
