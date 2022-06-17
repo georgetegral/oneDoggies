@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Home from './views/home';
 import Mint from './views/mint';
-import Avatars from './views/avatars';
+import Doggies from './views/doggies';
 import MainLayout from "./layouts/main";
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}/>
         <Route path="/mint" element={<Mint />}/>
-        <Route path="/avatars" element={<Avatars />}/>
+        <Route path="/doggies" element={<Doggies />}/>
       </Routes>
     </MainLayout>
     </>

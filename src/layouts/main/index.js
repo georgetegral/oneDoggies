@@ -23,8 +23,8 @@ const Links = [
     to: "mint",
   },
   {
-    name: "Avatars",
-    to: "/avatars",
+    name: "Doggies",
+    to: "/doggies",
   },
 ];
 
