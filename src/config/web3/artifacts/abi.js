@@ -1,6 +1,6 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0xA958585a0E8257264D3e3DE986473f10db746393'
+        1337: '0xd074D720cC73A67762F9429d536aF2ac9aD9E594'
     },
     abi: [
       {
@@ -598,21 +598,16 @@ const RandomAvatarsInterface = {
         "inputs": [
           {
             "internalType": "uint256",
-            "name": "_dadDna",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "_momDna",
+            "name": "tokenId",
             "type": "uint256"
           }
         ],
-        "name": "_mixDna",
+        "name": "tokenURI",
         "outputs": [
           {
-            "internalType": "uint256",
+            "internalType": "string",
             "name": "",
-            "type": "uint256"
+            "type": "string"
           }
         ],
         "stateMutability": "view",

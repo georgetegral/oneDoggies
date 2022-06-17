@@ -2,15 +2,18 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./IERC721.sol";
 import "./IERC721Receiver.sol";
 import "./Ownable.sol";
+import "./Base64.sol";
 
 contract DoggiesContract is IERC721, Ownable {
 
     uint256 public constant CREATION_LIMIT_GEN0 = 100;
     string public constant name = "ONEDoggies";
     string public constant symbol = "DOGGIES";
+    using Strings for uint256;
 
     bytes4 internal constant ERC721_RECEIVED = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
 
@@ -195,6 +198,42 @@ contract DoggiesContract is IERC721, Ownable {
         emit Transfer(_from, _to, _tokenId);
     }
 
+    function tokenURI(uint256 tokenId) public view returns (string memory){
+        require(tokenId < doggies.length, "URI query for nonexistent token."); //Token must exist
+        (uint256 _dna,,,,) = getDoggie(tokenId);
+        (uint256 primaryColor,uint256 secondaryColor,uint256 stomachColor,uint256 backgroundColor,uint256 locketColor,uint256 beltColor,uint256 dotsColor,uint256 animation,) = _divideDna(_dna);
+        string memory jsonURI = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name": "ONEDoggie #',
+                        tokenId.toString(),
+                        '", "description": "ONEDoggies are adorable randomized dogs residing on the Harmony ONE Blockchain.",',
+                        '"attributes": [{"Primary Color": "',
+                        primaryColor.toString(),
+                        '",Secondary Color": "',
+                        secondaryColor.toString(),
+                        '","Stomach Color": "',
+                        stomachColor.toString(),
+                        '","Background Color": "',
+                        backgroundColor.toString(),
+                        '","Locket Color": "',
+                        locketColor.toString(),
+                        '","Belt Color": "',
+                        beltColor.toString(),
+                        '","Dots Color": "',
+                        dotsColor.toString(),
+                        '","Animation Type": "',
+                        animation.toString(),
+                        '"}]}'
+                    )
+                )
+            )
+        );
+        
+        return string(abi.encodePacked("data:application/json;base64,",jsonURI));
+    }
+
     function _owns(address _claimant, uint256 _tokenId) internal view returns (bool){
         return doggieIndexToOwner[_tokenId] == _claimant;
     }
@@ -235,7 +274,7 @@ contract DoggiesContract is IERC721, Ownable {
         return (_spender == _from || _approvedFor(_spender, _tokenId) || isApprovedForAll(_from, _spender));
     }
 
-    function _mixDna(uint256 _dadDna, uint256 _momDna) public view returns (uint256){
+    function _mixDna(uint256 _dadDna, uint256 _momDna) internal view returns (uint256){
         // Example dad DNA: 10111213132311 ---> 10 11 12 13 1 3 23 1 1
         // Example mom DNA: 97143939141639 ---> 97 14 39 39 2 9 16 3 9
         uint256 primaryColor;
@@ -298,6 +337,28 @@ contract DoggiesContract is IERC721, Ownable {
         return uint256(
             (_dna % (1 * 10 ** (_rightDiscard + sectionSize))) / (1 * 10 ** _rightDiscard)
         );
+    }
+
+    function _divideDna(uint256 _dna) internal pure returns(
+        uint256 primaryColor,
+        uint256 secondaryColor,
+        uint256 stomachColor,
+        uint256 backgroundColor,
+        uint256 locketColor,
+        uint256 beltColor,
+        uint256 dotsColor,
+        uint256 animation,
+        uint256 secret
+    ){
+        primaryColor = _getDnaSection(_dna, 12, 2);
+        secondaryColor = _getDnaSection(_dna, 10, 2);
+        stomachColor = _getDnaSection(_dna, 8, 2);
+        backgroundColor = _getDnaSection(_dna, 6, 2);
+        locketColor = _getDnaSection(_dna, 5, 1);
+        beltColor = _getDnaSection(_dna, 4, 1);
+        dotsColor = _getDnaSection(_dna, 2, 2);
+        animation = _getDnaSection(_dna, 1, 1);
+        secret = _getDnaSection(_dna, 0, 1);
     }
 
 }
