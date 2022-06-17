@@ -43,6 +43,7 @@ import {
     const [ dnaMint, setDnaMint ] = useState(0);
     const [ doggieOwner, setDoggieOwner ] = useState(0);
 
+    //Dog attributes
     const [isMinting, setIsMinting] = useState(false);
     const [primaryColor, setPrimaryColor] = useState(10);
     const [secondaryColor, setSecondaryColor] = useState(11);
@@ -52,7 +53,7 @@ import {
     const [beltColor, setBeltColor] = useState(3);
     const [dotsColor, setDotsColor] = useState(23);
     const [animationType, setAnimationType] = useState(1);
-    const [secret, setSecret] = useState(1);
+    const [secret, setSecret] = useState(Math.floor(Math.random() * 9) + 1);
 
     const sliderMinValue = 10;
     const sliderMaxValue = 99;
@@ -68,6 +69,7 @@ import {
       setBeltColor(Math.floor(Math.random() * 7) + 3);
       setDotsColor(Math.floor(Math.random() * 90) + 10);
       setAnimationType(Math.floor(Math.random() * 3) + 1);
+      setSecret(Math.floor(Math.random() * 9) + 1);
     }
 
     function baseDoggie(){
@@ -79,6 +81,7 @@ import {
       setBeltColor(3);
       setDotsColor(23);
       setAnimationType(1);
+      setSecret(Math.floor(Math.random() * 9) + 1);
     }
 
     const mint = () => {
