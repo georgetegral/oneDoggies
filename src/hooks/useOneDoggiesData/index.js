@@ -5,15 +5,22 @@ import useOneDoggies from "../useOneDoggies";
 const getDoggieData = async ({ oneDoggies, tokenId }) => {
     const [
         tokenURI,
-        dna,
-        birthTime,
-        momId,
-        dadId,
-        generation
+        doggieData,
+        owner
     ] = await Promise.all([
       oneDoggies.methods.tokenURI(tokenId).call(),
       oneDoggies.methods.getDoggie(tokenId).call(),
+      oneDoggies.methods.ownerOf(tokenId).call()
     ]);
+
+    const responseMetadata = await fetch(tokenURI);
+    const metadata = await responseMetadata.json();
+    
+    const dna = doggieData.dna;
+    const birthTime = doggieData.birthTime;
+    const momId = doggieData.momId;
+    const dadId = doggieData.dadId;
+    const generation = doggieData.generation;
 
     return {
         tokenId,
@@ -22,7 +29,9 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
         birthTime,
         momId,
         dadId,
-        generation
+        generation,
+        owner,
+        ...metadata
     }
 }
 
