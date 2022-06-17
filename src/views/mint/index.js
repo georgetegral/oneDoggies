@@ -27,12 +27,14 @@ import {
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
   import { useWeb3React } from "@web3-react/core";
+  import RequestAccess from "../../components/request-access";
+  
   import { useCallback, useEffect, useState } from "react";
   
   const Mint = () => {
     const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
     //console.log(oneDoggies); //To get the method names
-    const { account } = useWeb3React();
+    const { account, active } = useWeb3React();
     const toast = useToast();
 
     //Modal variables
@@ -138,6 +140,8 @@ import {
 
       setIsMinting(false);
   }
+
+  if (!active) return <RequestAccess />;
 
     return (
     <Stack direction="column">
