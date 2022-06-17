@@ -1,10 +1,4 @@
-import {
-    Flex,
-    Heading,
-    Text,
-    Box,
-    Center
-} from "@chakra-ui/react";
+import {Box} from "@chakra-ui/react";
 import colors from "../../components/colors";
 
 const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor, locketColor, beltColor, dotsColor, animationType, secret}) => {
@@ -30,14 +24,14 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
         background: "#"+colors[secondaryColor]
     }
 
-    if (animationType == 1 || animationType == 3){
+    if (animationType === 1 || animationType === 3){
         var tongueStyle = {
             WebkitAnimation: "grow 0.1s infinite alternate",
               animation: "grow 0.1s infinite alternate"
         }
     }
     else {
-        var tongueStyle = {
+        tongueStyle = {
             WebkitAnimation: "grow 0s infinite alternate",
               animation: "grow 0s infinite alternate"
         }
@@ -64,7 +58,7 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
         borderBottom: "5px solid #"+colors[beltColor]
     }
 
-    if (animationType == 1 || animationType == 2){
+    if (animationType === 1 || animationType === 2){
         var tailStyle = {
             background: "#"+colors[primaryColor],
             WebkitAnimation: "shake 0.08s infinite alternate",
@@ -72,7 +66,7 @@ const DoggieCard = ({primaryColor, secondaryColor, stomachColor, backgroundColor
         }
     }
     else {
-        var tailStyle = {
+        tailStyle = {
             background: "#"+colors[primaryColor],
             WebkitAnimation: "shake 0s infinite alternate",
               animation: "shake 0s infinite alternate"
