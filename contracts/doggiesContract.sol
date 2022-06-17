@@ -41,16 +41,22 @@ contract DoggiesContract is IERC721, Ownable {
 
     uint256 public gen0Counter;
 
+    function safeTransferFrom( address _from, address _to, uint256 _tokenId) public {
+        safeTransferFrom(_from, _to, _tokenId, "");
+    }
+
+    function safeTransferFrom( address _from, address _to, uint256 _tokenId, bytes memory _data) public {
+        require( _isApprovedOrOwner(msg.sender, _from, _to, _tokenId));
+        _safeTransfer(_from, _to, _tokenId, _data);
+    }
+
     function _safeTransfer(address _from, address _to, uint256 _tokenId, bytes memory _data) internal{
         _transfer(_from, _to, _tokenId);
         require(_checkERC721Support(_from, _to, _tokenId, _data) );
     }
 
     function transferFrom(address _from, address _to, uint256 _tokenId) public {
-        require(_to != address(0));
-        require(msg.sender == _from || _approvedFor(msg.sender, _tokenId) || isApprovedForAll(_from, msg.sender));
-        require(_owns(_from, _tokenId));
-        require(_tokenId < doggies.length);
+        require( _isApprovedOrOwner(msg.sender, _from, _to, _tokenId));
 
         _transfer(_from, _to, _tokenId);
     }
@@ -172,10 +178,8 @@ contract DoggiesContract is IERC721, Ownable {
         if(!_isContract(_to)){
             return true;
         }
-
         //Call onERC721Received in the _to contract
         bytes4 returnData = IERC721Receiver(_to).onERC721Received(msg.sender, _from, _tokenId, _data);
-        
         //Check return value
         return returnData == ERC721_RECEIVED;
     }
@@ -187,6 +191,15 @@ contract DoggiesContract is IERC721, Ownable {
             size := extcodesize(_to)
         }
         return size > 0;
+    }
+
+    function _isApprovedOrOwner(address _spender, address _from, address _to, uint256 _tokenId) internal view returns (bool){
+        require(_tokenId < doggies.length); //Token must exist
+        require(_to != address(0)); //To address is not zero address
+        require(_owns(_from, _tokenId)); //From owns the token
+
+        //spender is from, or spender is approved for tokenId, or spender is operator for from
+        return (_spender == _from || _approvedFor(_spender, _tokenId) || isApprovedForAll(_from, _spender));
     }
 
 }
