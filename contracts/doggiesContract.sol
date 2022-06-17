@@ -22,11 +22,11 @@ contract DoggiesContract is IERC721, Ownable {
         uint256 doggieId, 
         uint256 momId, 
         uint256 dadId, 
-        uint256 genes
+        uint256 dna
     );
 
     struct Doggie {
-        uint256 genes;
+        uint256 dna;
         uint64 birthTime;
         uint32 momId;
         uint32 dadId;
@@ -43,6 +43,32 @@ contract DoggiesContract is IERC721, Ownable {
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     uint256 public gen0Counter;
+
+    function breed( uint256 _dadId, uint256 _momId) public returns (uint256) {
+        //Check ownership
+        require(_owns(msg.sender, _dadId), "The user doesn't own the token.");
+        require(_owns(msg.sender, _momId), "The user doesn't own the token.");
+        //Get the DNA of the parents
+        (uint256 _dadDna,,,,uint256 _dadGeneration) = getDoggie(_dadId);
+        (uint256 _momDna,,,,uint256 _momGeneration) = getDoggie(_momId);
+        //Get the new dna
+        uint256 _newDna = _mixDna(_dadDna, _momDna);
+        //Figure out the generation
+        uint256 _kidGeneration = 0;
+        if(_dadGeneration < _momGeneration){
+            _kidGeneration = _momGeneration + 1;
+            _kidGeneration /=2;
+        }
+        else if (_dadGeneration > _momGeneration){
+            _kidGeneration = _dadGeneration + 1;
+            _kidGeneration /=2;
+        }
+        else {
+            _kidGeneration = _momGeneration + 1;
+        }
+        //Create a new cat with the new properties, give it to the msg.sender
+        return _createDoggie(_momId, _dadId, _kidGeneration, _newDna, msg.sender);
+    }
 
     function supportsInterface(bytes4 _interfaceId) external pure returns (bool){
         return (_interfaceId == _INTERFACE_ID_ERC721 || _interfaceId == _INTERFACE_ID_ERC165);
@@ -96,8 +122,8 @@ contract DoggiesContract is IERC721, Ownable {
         return _operatorApprovals[owner][operator];
     }
 
-    function getDoggie(uint256 _id) external view returns (
-        uint256 genes,
+    function getDoggie(uint256 _id) public view returns (
+        uint256 dna,
         uint256 birthTime,
         uint256 momId,
         uint256 dadId,
@@ -105,7 +131,7 @@ contract DoggiesContract is IERC721, Ownable {
     ){
         Doggie storage doggie = doggies[_id]; //pointer, uses less memory than "memory" as that would copy the value
 
-        genes = doggie.genes;
+        dna = doggie.dna;
         birthTime = uint256(doggie.birthTime);
         momId = uint256(doggie.momId);
         dadId = uint256(doggie.dadId);
@@ -113,16 +139,16 @@ contract DoggiesContract is IERC721, Ownable {
         
     }
 
-    function createDoggieGen0(uint256 _genes) public onlyOwner returns (uint256) {
+    function createDoggieGen0(uint256 _dna) public onlyOwner returns (uint256) {
         require(gen0Counter < CREATION_LIMIT_GEN0);
         gen0Counter++;
         //Gen 0 have no owners, they are owned by the contract
-        return _createDoggie(0,0,0,_genes, msg.sender);
+        return _createDoggie(0,0,0,_dna, msg.sender);
     }
 
-    function _createDoggie(uint256 _momId, uint256 _dadId, uint256 _generation, uint256 _genes, address _owner) private returns (uint256) {
+    function _createDoggie(uint256 _momId, uint256 _dadId, uint256 _generation, uint256 _dna, address _owner) private returns (uint256) {
         Doggie memory _doggie = Doggie({
-            genes: _genes,
+            dna: _dna,
             birthTime: uint64(block.timestamp),
             momId: uint32(_momId),
             dadId: uint32(_dadId),
@@ -131,7 +157,7 @@ contract DoggiesContract is IERC721, Ownable {
 
         doggies.push(_doggie);
         uint256 newDoggieId = doggies.length - 1;
-        emit Birth(_owner, newDoggieId, _momId, _dadId, _genes);
+        emit Birth(_owner, newDoggieId, _momId, _dadId, _dna);
         _transfer(address(0), _owner, newDoggieId);
         return newDoggieId;
     }
@@ -207,6 +233,71 @@ contract DoggiesContract is IERC721, Ownable {
 
         //spender is from, or spender is approved for tokenId, or spender is operator for from
         return (_spender == _from || _approvedFor(_spender, _tokenId) || isApprovedForAll(_from, _spender));
+    }
+
+    function _mixDna(uint256 _dadDna, uint256 _momDna) public view returns (uint256){
+        // Example dad DNA: 10111213132311 ---> 10 11 12 13 1 3 23 1 1
+        // Example mom DNA: 97143939141639 ---> 97 14 39 39 2 9 16 3 9
+        uint256 primaryColor;
+        uint256 secondaryColor;
+        uint256 stomachColor;
+        uint256 backgroundColor;
+        uint256 locketColor;
+        uint256 beltColor;
+        uint256 dotsColor;
+        uint256 animation;
+        uint256 secret;
+        uint256 finalDna;
+
+        uint priority = _getRandomPriority(); //0 = Mom Priority, 1 = Dad Priority
+        //Priority gets primary color and animation
+        //Mom Priority
+        if(priority == 0){
+            primaryColor = _getDnaSection(_momDna, 12, 2);
+            secondaryColor = _getDnaSection(_dadDna, 10, 2);
+            stomachColor = _getDnaSection(_dadDna, 8, 2);
+            animation = _getDnaSection(_momDna, 1, 1);
+        }
+        //Dad Priority
+        else{
+            primaryColor = _getDnaSection(_dadDna, 12, 2);
+            secondaryColor = _getDnaSection(_momDna, 10, 2);
+            stomachColor = _getDnaSection(_momDna, 8, 2);
+            animation = _getDnaSection(_dadDna, 1, 1);
+        }
+        backgroundColor = _getRandomNumber(10,89);
+        locketColor = _getRandomNumber(1,2);
+        beltColor = _getRandomNumber(3,9);
+        dotsColor = _getRandomNumber(10,89);
+        secret = _getRandomNumber(1,9);
+
+        finalDna = primaryColor     *1000000000000;
+        finalDna += secondaryColor  *10000000000;
+        finalDna += stomachColor    *100000000;
+        finalDna += backgroundColor *1000000;
+        finalDna += locketColor     *100000;
+        finalDna += beltColor       *10000;
+        finalDna += dotsColor       *100;
+        finalDna += animation       *10;
+        finalDna += secret;
+
+        return finalDna;
+    }
+
+    function _getRandomPriority() internal view returns (uint){
+        uint randomnumber = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, block.number))) % 2;
+        return randomnumber;
+    }
+
+    function _getRandomNumber(uint256 lowerRange, uint256 upperRange) internal view returns (uint256) {
+        uint randomnumber = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, block.number))) % upperRange;
+        return randomnumber + lowerRange;    
+    }
+
+    function _getDnaSection(uint256 _dna, uint8 _rightDiscard, uint8 sectionSize) internal pure returns (uint256){
+        return uint256(
+            (_dna % (1 * 10 ** (_rightDiscard + sectionSize))) / (1 * 10 ** _rightDiscard)
+        );
     }
 
 }
