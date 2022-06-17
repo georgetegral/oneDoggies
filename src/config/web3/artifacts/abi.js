@@ -1,6 +1,6 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0xBF2567E825a449BD2e87770F42f5327442924882'
+        1337: '0x8B1E18feCB5aC695320F476934A547D7181acBC8'
     },
     abi: [
       {
@@ -89,7 +89,7 @@ const RandomAvatarsInterface = {
           {
             "indexed": false,
             "internalType": "string",
-            "name": "name",
+            "name": "doggieName",
             "type": "string"
           }
         ],
@@ -114,7 +114,7 @@ const RandomAvatarsInterface = {
           {
             "indexed": false,
             "internalType": "string",
-            "name": "name",
+            "name": "doggieName",
             "type": "string"
           }
         ],
@@ -309,7 +309,7 @@ const RandomAvatarsInterface = {
           },
           {
             "internalType": "string",
-            "name": "_name",
+            "name": "_doggieName",
             "type": "string"
           }
         ],
@@ -533,6 +533,11 @@ const RandomAvatarsInterface = {
             "internalType": "uint256",
             "name": "generation",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "doggieName",
+            "type": "string"
           }
         ],
         "stateMutability": "view",
@@ -548,7 +553,7 @@ const RandomAvatarsInterface = {
           },
           {
             "internalType": "string",
-            "name": "_name",
+            "name": "_doggieName",
             "type": "string"
           }
         ],
@@ -664,7 +669,7 @@ const RandomAvatarsInterface = {
           },
           {
             "internalType": "string",
-            "name": "_newName",
+            "name": "_newDoggieName",
             "type": "string"
           }
         ],
