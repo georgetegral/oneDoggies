@@ -1,6 +1,6 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0xEedeD083Ffd50ccf6847Fe428bf8B930AC558389'
+        1337: '0xBF2567E825a449BD2e87770F42f5327442924882'
     },
     abi: [
       {
@@ -85,9 +85,40 @@ const RandomAvatarsInterface = {
             "internalType": "uint256",
             "name": "dna",
             "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
           }
         ],
         "name": "Birth",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "doggieId",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "name": "NameChange",
         "type": "event"
       },
       {
@@ -275,6 +306,11 @@ const RandomAvatarsInterface = {
             "internalType": "uint256",
             "name": "_momId",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
           }
         ],
         "name": "breed",
@@ -509,6 +545,11 @@ const RandomAvatarsInterface = {
             "internalType": "uint256",
             "name": "_dna",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
           }
         ],
         "name": "createDoggieGen0",
@@ -613,6 +654,24 @@ const RandomAvatarsInterface = {
         "stateMutability": "view",
         "type": "function",
         "constant": true
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_newName",
+            "type": "string"
+          }
+        ],
+        "name": "updateName",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
         "inputs": [

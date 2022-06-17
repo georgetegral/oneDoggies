@@ -25,7 +25,14 @@ contract DoggiesContract is IERC721, Ownable {
         uint256 doggieId, 
         uint256 momId, 
         uint256 dadId, 
-        uint256 dna
+        uint256 dna,
+        string name
+    );
+
+    event NameChange(
+        address owner, 
+        uint256 doggieId, 
+        string name
     );
 
     struct Doggie {
@@ -34,6 +41,7 @@ contract DoggiesContract is IERC721, Ownable {
         uint32 momId;
         uint32 dadId;
         uint16 generation;
+        string name;
     }
 
     Doggie[] doggies;
@@ -47,7 +55,7 @@ contract DoggiesContract is IERC721, Ownable {
 
     uint256 public gen0Counter;
 
-    function breed( uint256 _dadId, uint256 _momId) public returns (uint256) {
+    function breed( uint256 _dadId, uint256 _momId, string memory _name) public returns (uint256) {
         //Check ownership
         require(_owns(msg.sender, _dadId), "The user doesn't own the token.");
         require(_owns(msg.sender, _momId), "The user doesn't own the token.");
@@ -70,7 +78,7 @@ contract DoggiesContract is IERC721, Ownable {
             _kidGeneration = _momGeneration + 1;
         }
         //Create a new cat with the new properties, give it to the msg.sender
-        return _createDoggie(_momId, _dadId, _kidGeneration, _newDna, msg.sender);
+        return _createDoggie(_momId, _dadId, _kidGeneration, _newDna, msg.sender, _name);
     }
 
     function supportsInterface(bytes4 _interfaceId) external pure returns (bool){
@@ -142,25 +150,26 @@ contract DoggiesContract is IERC721, Ownable {
         
     }
 
-    function createDoggieGen0(uint256 _dna) public onlyOwner returns (uint256) {
+    function createDoggieGen0(uint256 _dna, string memory _name) public onlyOwner returns (uint256) {
         require(gen0Counter < CREATION_LIMIT_GEN0);
         gen0Counter++;
         //Gen 0 have no owners, they are owned by the contract
-        return _createDoggie(0,0,0,_dna, msg.sender);
+        return _createDoggie(0,0,0,_dna, msg.sender, _name);
     }
 
-    function _createDoggie(uint256 _momId, uint256 _dadId, uint256 _generation, uint256 _dna, address _owner) private returns (uint256) {
+    function _createDoggie(uint256 _momId, uint256 _dadId, uint256 _generation, uint256 _dna, address _owner, string memory _name) private returns (uint256) {
         Doggie memory _doggie = Doggie({
             dna: _dna,
             birthTime: uint64(block.timestamp),
             momId: uint32(_momId),
             dadId: uint32(_dadId),
-            generation: uint16(_generation)
+            generation: uint16(_generation),
+            name: _name
         });
 
         doggies.push(_doggie);
         uint256 newDoggieId = doggies.length - 1;
-        emit Birth(_owner, newDoggieId, _momId, _dadId, _dna);
+        emit Birth(_owner, newDoggieId, _momId, _dadId, _dna, _name);
         _transfer(address(0), _owner, newDoggieId);
         return newDoggieId;
     }
@@ -360,6 +369,13 @@ contract DoggiesContract is IERC721, Ownable {
         dotsColor = _getDnaSection(_dna, 2, 2);
         animation = _getDnaSection(_dna, 1, 1);
         secret = _getDnaSection(_dna, 0, 1);
+    }
+
+    function updateName(uint256 _tokenId, string memory _newName) public{
+        require(_owns(msg.sender, _tokenId), "Only the owner can change the doggie's name."); //From owns the token
+        Doggie storage doggie = doggies[_tokenId];
+        doggie.name = _newName; 
+        emit NameChange(msg.sender, _tokenId, _newName);
     }
 
     //ERC721Enumerable
