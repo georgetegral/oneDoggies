@@ -38,8 +38,20 @@ contract DoggiesContract is IERC721, Ownable {
 
     uint256 public gen0Counter;
 
+    function transferFrom(address _from, address _to, uint256 _tokenId) public {
+        require(_to != address(0));
+        require(msg.sender == _from || _approvedFor(msg.sender, _tokenId) || isApprovedForAll(_from, msg.sender));
+        require(_owns(_from, _tokenId));
+        require(_tokenId < doggies.length);
+
+        _transfer(_from, _to, _tokenId);
+    }
+
     function approve(address _to, uint256 _tokenId) public {
-        require(_owns(msg.sender, _tokenId));
+        address _owner = ownerOf(_tokenId);
+        require(_to != _owner, "ERC721: approval to current owner");
+
+        require(_owns(msg.sender, _tokenId) || isApprovedForAll(_owner, msg.sender), "ERC721: approve caller is not token owner nor approved for all");
 
         _approve(_tokenId, _to);
         emit Approval(msg.sender, _to, _tokenId);
@@ -111,7 +123,7 @@ contract DoggiesContract is IERC721, Ownable {
         return doggies.length;
     }
 
-    function ownerOf(uint256 _tokenId) external view returns (address){
+    function ownerOf(uint256 _tokenId) public view returns (address){
         return doggieIndexToOwner[_tokenId];
     }
 
@@ -142,6 +154,10 @@ contract DoggiesContract is IERC721, Ownable {
 
     function _approve(uint256 _tokenId, address _approved) internal {
         doggieIndexToApproved[_tokenId] = _approved;
+    }
+
+    function _approvedFor(address _claimant, uint256 _tokenId) internal view returns (bool) {
+        return doggieIndexToApproved[_tokenId] == _claimant;
     }
 
 }
