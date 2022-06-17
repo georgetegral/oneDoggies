@@ -211,7 +211,7 @@ contract DoggiesContract is IERC721, Ownable {
                         '", "description": "ONEDoggies are adorable randomized dogs residing on the Harmony ONE Blockchain.",',
                         '"attributes": [{"Primary Color": "',
                         primaryColor.toString(),
-                        '",Secondary Color": "',
+                        '","Secondary Color": "',
                         secondaryColor.toString(),
                         '","Stomach Color": "',
                         stomachColor.toString(),
