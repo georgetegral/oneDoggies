@@ -1,20 +1,16 @@
 import {
     Stack,
-    Flex,
     Heading,
     Text,
     Button,
     ButtonGroup,
     Box,
     useToast,
-    useColorModeValue,
     Center,
-    Badge,
     Slider,
     SliderTrack,
     SliderFilledTrack,
     SliderThumb,
-    SliderMark,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -22,14 +18,16 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    useDisclosure
+    useDisclosure,
+    Input
   } from "@chakra-ui/react";
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
+  import dogNames from "dog-names";
   
-  import { useCallback, useEffect, useState } from "react";
+  import { useState } from "react";
   
   const Mint = () => {
     const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
@@ -44,6 +42,10 @@ import {
     const [ dadId, setDadId ] = useState(0);
     const [ dnaMint, setDnaMint ] = useState(0);
     const [ doggieOwner, setDoggieOwner ] = useState(0);
+    const [ mintedName, setMintedName ] = useState(0);
+    const [ suggestedName, setSuggestedName ] = useState(dogNames.allRandom());
+    const [ name, setName ] = useState("");
+    const handleChange = (event) => setName(event.target.value)
 
     //Dog attributes
     const [isMinting, setIsMinting] = useState(false);
@@ -61,6 +63,13 @@ import {
     const sliderMaxValue = 99;
     const sliderSmallMinValue = 1;
     const sliderSmallMaxValue = 9;
+
+    function randomName(){
+      setName(dogNames.allRandom());
+    }
+    function randomSuggestion(){
+      setSuggestedName(dogNames.allRandom());
+    }
 
     function randomDoggie(){
       setPrimaryColor(Math.floor(Math.random() * 90) + 10);
@@ -91,7 +100,7 @@ import {
       setIsMinting(true);
 
       oneDoggies.methods
-      .createDoggieGen0(dna)
+      .createDoggieGen0(dna,name)
       .send({
           from: account
           //value: 1e15
@@ -119,14 +128,14 @@ import {
       })
 
       oneDoggies.events
-      .Birth().
-      on('data', function(event){
+      .Birth()
+      .on('data', function(event){
         setDoggieId(event.returnValues.doggieId);
         setDadId(event.returnValues.dadId);
         setMomId(event.returnValues.momId);
         setDnaMint(event.returnValues.genes);
         setDoggieOwner(event.returnValues.owner);
-
+        setMintedName(event.returnValues.name);
         onOpen();
 
       })
@@ -145,13 +154,25 @@ import {
 
     return (
     <Stack direction="column">
+      <Center>
+        <Heading
+          lineHeight={1.1}
+          fontWeight={600}
+          fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+        >
+          <Text as={"span"} color={"blue.400"}>
+          Mint your Doggie! 🐾
+          </Text>
+        </Heading>
+      </Center>
       <Heading
         lineHeight={1.1}
         fontWeight={600}
-        fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+        fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
+        spacing={10}
       >
         <Text as={"span"} color={"blue.400"}>
-         Mint your Doggie! 🐾
+          Select your Doggie's attributes!
         </Text>
       </Heading>
 
@@ -173,18 +194,16 @@ import {
           
         </Stack>
         
-        <Stack w={"full"}>
+        <Stack w={"full"} >
         
           <Box paddingLeft={1} paddingRight={5}>
-            <Heading
-              lineHeight={1.1}
-              fontWeight={600}
-              fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
-            >
-              <Text as={"span"} color={"blue.400"}>
-                Select your Doggie's attributes!
-              </Text>
-            </Heading>
+            
+            <Text>Name: (you can change it later) </Text>
+            <ButtonGroup>
+                <Input placeholder={`How about "${suggestedName}"?`} value={name} onChange={handleChange} width="100%"/>
+                <Button colorScheme='green' size="md" width="65%" justifyContent="flex-start" onClick={() => randomName()}>Random Name</Button>
+                <Button colorScheme='teal' size="md" width="85%" justifyContent="flex-start" onClick={() => randomSuggestion()}>Random Suggestion</Button>
+            </ButtonGroup>
             <Text>Primary Color: {primaryColor}</Text>
             <Slider 
                 aria-label='slider-ex-1' 
@@ -328,6 +347,9 @@ import {
           <ModalBody>
             <Text fontWeight='bold' mb='1rem'>
               Your doggie was successfully minted with the following atributes: 
+            </Text>
+            <Text>
+              Name: {mintedName}
             </Text>
             <Text>
               ID: {doggieId}
