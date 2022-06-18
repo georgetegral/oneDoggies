@@ -110,6 +110,7 @@ import {
               title: "Transaction sent",
               description: "Tx hash: "+txHash,
               status: "info",
+              isClosable: true,
           })
       })
       .on("receipt", () => {
@@ -117,6 +118,7 @@ import {
               title: "Transaction confirmed",
               description: "Congrats! The transaction has been confirmed.",
               status: "success",
+              isClosable: true,
           })
       })
       .on("error", (error) => {
@@ -124,6 +126,7 @@ import {
               title: "Transaction failed",
               description: error.message,
               status: "error",
+              isClosable: true,
           })
       })
 
@@ -144,6 +147,7 @@ import {
             title: "Mint failed",
             description: error.message,
             status: "error",
+            isClosable: true,
         })
       })
 

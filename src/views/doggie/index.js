@@ -11,7 +11,16 @@ import {
     Button,
     Tag,
     useToast,
-    Box
+    Box,
+    Input,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
   } from "@chakra-ui/react";
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
@@ -30,19 +39,36 @@ const Doggie = () =>{
     const [ transfering, setTransfering ] = useState(false);
     const oneDoggies = useOneDoggies();
 
+    //Modal variables
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [ transferAddress, setTransferAddress ] = useState("");
+    const handleTransferChange = (event) => setTransferAddress(event.target.value);
+
+    const openTransferModal = () => {
+        onOpen();
+    }
+
     const transfer = () => {
         setTransfering(true);
-        const address = prompt("Enter the new address: ");
-        const isAddress = library.utils.isAddress(address);
+        const isAddress = library.utils.isAddress(transferAddress);
         if(!isAddress) {
             toast({
                 title: "Invalid address.",
                 description: "This address is not an Ethereum address.",
-                status: "error"
+                status: "error",
+                isClosable: true,
             });
             setTransfering(false);
-        } else {
-            oneDoggies.methods.safeTransferFrom(doggie.owner, address, doggie.tokenId).send({
+        } else if(transferAddress === doggie.owner){
+            toast({
+                title: "Invalid address.",
+                description: "You can't transfer the Doggie to yourself! Silly.",
+                status: "error",
+                isClosable: true,
+            });
+            setTransfering(false);
+        }else {
+            oneDoggies.methods.safeTransferFrom(doggie.owner, transferAddress, doggie.tokenId).send({
                 from: account
             })
             .on("error", (error) => {
@@ -50,6 +76,7 @@ const Doggie = () =>{
                     title: "Transaction failed",
                     description: error.message,
                     status: "error",
+                    isClosable: true,
                 })
             })
             .on("transactionHash", (txHash) => {
@@ -57,14 +84,17 @@ const Doggie = () =>{
                     title: "Transaction sent.",
                     description: txHash,
                     status: "info",
+                    isClosable: true,
                 });
             })
             .on("receipt", () => {
                 toast({
                     title: "Transaction confirmed.",
-                    description: `This Doggie now belongs to ${address}`,
-                    status: "success"
+                    description: `This Doggie now belongs to ${transferAddress}`,
+                    status: "success",
+                    isClosable: true,
                 });
+                onClose();
                 update();
             });
             setTransfering(false);
@@ -96,7 +126,7 @@ const Doggie = () =>{
             />
         </Box>
         <Button 
-          onClick={transfer} 
+          onClick={openTransferModal} 
           disabled={account !== doggie.owner} 
           colorScheme="green"
           isLoading={transfering}
@@ -169,6 +199,37 @@ const Doggie = () =>{
           </Tbody>
         </Table>
       </Stack>
+
+      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Transfer your Doggie.</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontWeight='bold'>
+                Once transfered, the action cannot be reversed.
+            </Text>
+            <Input 
+                variant='flushed' 
+                placeholder='Input a valid Ethereum address' 
+                mb='1rem'
+                value={transferAddress}
+                onChange={handleTransferChange}
+            />
+            <Text fontWeight='bold' mb='1rem'>
+              Are you sure you want to transfer?
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='green' mr={3} onClick={transfer}>
+              Transfer
+            </Button>
+            <Button colorScheme='red' mr={3} onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
     </Stack>
   );
 }
