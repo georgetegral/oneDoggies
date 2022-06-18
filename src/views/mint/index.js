@@ -31,7 +31,6 @@ import {
   
   const Mint = () => {
     const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
-    //console.log(oneDoggies); //To get the method names
     const { account, active } = useWeb3React();
     const toast = useToast();
 

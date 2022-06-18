@@ -128,7 +128,6 @@ const Breed = () => {
             setBirthTimeDad(doggies[idx].birthTime);
         }
         else{
-            console.log("undefined");
             setDadId("");
             setDoggieDad("");
             setHasSelectedDad(false);
@@ -164,8 +163,6 @@ const Breed = () => {
             setHasSelectedMom(false);
         }
     }
-
-    
 
     const breed = () => {
         setBreeding(true);
