@@ -40,13 +40,9 @@ const Doggie = () =>{
     const oneDoggies = useOneDoggies();
 
     //Modal variables
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
     const [ transferAddress, setTransferAddress ] = useState("");
     const handleTransferChange = (event) => setTransferAddress(event.target.value);
-
-    const openTransferModal = () => {
-        onOpen();
-    }
 
     const transfer = () => {
         setTransfering(true);
@@ -94,7 +90,7 @@ const Doggie = () =>{
                     status: "success",
                     isClosable: true,
                 });
-                onClose();
+                onCloseTransfer();
                 update();
             });
             setTransfering(false);
@@ -126,7 +122,7 @@ const Doggie = () =>{
             />
         </Box>
         <Button 
-          onClick={openTransferModal} 
+          onClick={onOpenTransfer} 
           disabled={account !== doggie.owner} 
           colorScheme="green"
           isLoading={transfering}
@@ -200,7 +196,7 @@ const Doggie = () =>{
         </Table>
       </Stack>
 
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal blockScrollOnMount={false} isOpen={isOpenTransfer} onClose={onCloseTransfer} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Transfer your Doggie.</ModalHeader>
@@ -225,7 +221,7 @@ const Doggie = () =>{
             <Button colorScheme='green' mr={3} onClick={transfer}>
               Transfer
             </Button>
-            <Button colorScheme='red' mr={3} onClick={onClose}>Cancel</Button>
+            <Button colorScheme='red' mr={3} onClick={onCloseTransfer}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
