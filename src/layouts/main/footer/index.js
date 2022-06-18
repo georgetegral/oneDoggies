@@ -3,7 +3,6 @@ import {
   Container,
   Stack,
   Text,
-  Link,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -28,10 +27,7 @@ const Footer = () => {
           align={{ base: "center", md: "center" }}
         >
           <Text>
-            © {new Date().getFullYear()} Original designs by
-            <Link ml={1} href="https://api.multiavatar.com/">
-              Multiavatar
-            </Link>
+            © {new Date().getFullYear()}
           </Text>
         </Container>
       </Box>

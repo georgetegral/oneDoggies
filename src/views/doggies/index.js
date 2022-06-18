@@ -87,7 +87,7 @@ const Doggies = () =>{
             <Loading />
           ) : (
             <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
-              {doggies.map(({tokenId, attributes, doggieName, generation, dna}) =>(
+              {doggies.map(({tokenId, attributes, doggieName, generation}) =>(
                 <LinkBox key={tokenId}>
                     <LinkOverlay href={`#/doggies/${tokenId}`}>
                         <Box paddingLeft={5} paddingRight={5} borderWidth="1px">

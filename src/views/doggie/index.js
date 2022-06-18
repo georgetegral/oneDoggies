@@ -30,19 +30,31 @@ import {
   import Loading from "../../components/loading";
   import { useState } from "react";
   import useOneDoggies from "../../hooks/useOneDoggies";
+  import dogNames from "dog-names";
 
 const Doggie = () =>{
     const { active, account, library } = useWeb3React();
     const { tokenId } = useParams();
     const { loading, doggie, update } = useOneDoggieData(tokenId);
     const toast = useToast();
-    const [ transfering, setTransfering ] = useState(false);
     const oneDoggies = useOneDoggies();
 
-    //Modal variables
+    //Transfer Modal variables
     const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
     const [ transferAddress, setTransferAddress ] = useState("");
     const handleTransferChange = (event) => setTransferAddress(event.target.value);
+    const [ transfering, setTransfering ] = useState(false);
+
+    //Rename Modal variables
+    const { isOpen: isOpenRename, onOpen: onOpenRename, onClose: onCloseRename } = useDisclosure();
+    const [ rename, setRename ] = useState("");
+    const [ suggestedName, setSuggestedName ] = useState(dogNames.allRandom());
+    const handleRenameChange = (event) => setRename(event.target.value);
+    const [ renaming, setRenaming ] = useState(false);
+
+    function randomSuggestion(){
+    setSuggestedName(dogNames.allRandom());
+    }
 
     const transfer = () => {
         setTransfering(true);
@@ -97,6 +109,51 @@ const Doggie = () =>{
         }
     }
 
+    const renameDoggie = () => {
+        setRenaming(true);
+        if(!rename) {
+            toast({
+                title: "Empty name.",
+                description: "Your doggie's new name cannot be empty!",
+                status: "error",
+                isClosable: true,
+            });
+            setRenaming(false);
+        }
+        else {
+            oneDoggies.methods.updateName(tokenId, rename).send({
+                from: account
+            })
+            .on("error", (error) => {
+                toast({
+                    title: "Transaction failed",
+                    description: error.message,
+                    status: "error",
+                    isClosable: true,
+                })
+            })
+            .on("transactionHash", (txHash) => {
+                toast({
+                    title: "Transaction sent.",
+                    description: txHash,
+                    status: "info",
+                    isClosable: true,
+                });
+            })
+            .on("receipt", () => {
+                toast({
+                    title: "Transaction confirmed.",
+                    description: `This Doggie's new name is ${rename}!`,
+                    status: "success",
+                    isClosable: true,
+                });
+                onCloseRename();
+                update();
+            });
+            setRenaming(false);
+        }
+    }
+
   if (!active) return <RequestAccess />;
 
   if (loading) return <Loading />;
@@ -124,10 +181,18 @@ const Doggie = () =>{
         <Button 
           onClick={onOpenTransfer} 
           disabled={account !== doggie.owner} 
-          colorScheme="green"
+          colorScheme="teal"
           isLoading={transfering}
         >
           {account !== doggie.owner ? "You are not the owner." : "Transfer"}
+        </Button>
+        <Button 
+          onClick={onOpenRename} 
+          disabled={account !== doggie.owner} 
+          colorScheme="blue"
+          isLoading={renaming}
+        >
+          {account !== doggie.owner ? "You are not the owner." : "Rename"}
         </Button>
         </Stack>
         <Stack width="100%" spacing={5}>
@@ -222,6 +287,34 @@ const Doggie = () =>{
               Transfer
             </Button>
             <Button colorScheme='red' mr={3} onClick={onCloseTransfer}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal blockScrollOnMount={false} isOpen={isOpenRename} onClose={onCloseRename} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Rename your Doggie.</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontWeight='bold'>
+                Give it a cool name!
+            </Text>
+            <Input 
+                variant='flushed' 
+                placeholder={`How about "${suggestedName}"?`}
+                mb='1rem'
+                value={rename}
+                onChange={handleRenameChange}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+          <Button colorScheme='blue' size="md" justifyContent="flex-start" marginRight={"auto"} onClick={randomSuggestion}>Suggest name</Button>
+            <Button colorScheme='green' mr={3} onClick={renameDoggie}>
+              Rename
+            </Button>
+            <Button colorScheme='red' mr={3} onClick={onCloseRename}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
