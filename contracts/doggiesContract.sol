@@ -59,6 +59,7 @@ contract DoggiesContract is IERC721, Ownable {
         //Check ownership
         require(_owns(msg.sender, _dadId), "The user doesn't own the token.");
         require(_owns(msg.sender, _momId), "The user doesn't own the token.");
+        require(_dadId != _momId, "The Doggies must be different to breed.");
         //Get the DNA of the parents
         (uint256 _dadDna,,,,uint256 _dadGeneration,) = getDoggie(_dadId);
         (uint256 _momDna,,,,uint256 _momGeneration,) = getDoggie(_momId);
