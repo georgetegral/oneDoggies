@@ -26,6 +26,10 @@ const Links = [
     name: "Doggies",
     to: "/doggies",
   },
+  {
+    name: "Breed",
+    to: "/breed"
+  }
 ];
 
 const MainLayout = ({ children }) => {
