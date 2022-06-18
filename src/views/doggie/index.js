@@ -35,37 +35,41 @@ const Doggie = () =>{
         const address = prompt("Enter the new address: ");
         const isAddress = library.utils.isAddress(address);
         if(!isAddress) {
-        toast({
-            title: "Invalid address.",
-            description: "This address is not an Ethereum address.",
-            status: "error"
-        });
-        setTransfering(false);
-        } else {
-        oneDoggies.methods.safeTransferFrom(doggie.owner, address, doggie.tokenId).send({
-            from: account
-        })
-        .on("error", () => {
+            toast({
+                title: "Invalid address.",
+                description: "This address is not an Ethereum address.",
+                status: "error"
+            });
             setTransfering(false);
-        })
-        .on("transactionHash", (txHash) => {
-            toast({
-            title: "Transaction sent.",
-            description: txHash,
-            status: "info",
+        } else {
+            oneDoggies.methods.safeTransferFrom(doggie.owner, address, doggie.tokenId).send({
+                from: account
+            })
+            .on("error", (error) => {
+                toast({
+                    title: "Transaction failed",
+                    description: error.message,
+                    status: "error",
+                })
+            })
+            .on("transactionHash", (txHash) => {
+                toast({
+                    title: "Transaction sent.",
+                    description: txHash,
+                    status: "info",
+                });
+            })
+            .on("receipt", () => {
+                toast({
+                    title: "Transaction confirmed.",
+                    description: `This Doggie now belongs to ${address}`,
+                    status: "success"
+                });
+                update();
             });
-        })
-        .on("receipt", () => {
-            toast({
-            title: "Transaction confirmed.",
-            description: `This Doggie now belongs to ${address}`,
-            status: "success"
-            });
-            update();
-        });
-        
+            setTransfering(false);
+        }
     }
-  }
 
   if (!active) return <RequestAccess />;
 
@@ -77,7 +81,8 @@ const Doggie = () =>{
       py={{ base: 5 }}
       direction={{ base: "column", md: "row" }}
     >
-        <Box paddingLeft={5} paddingRight={5} borderWidth="1px">
+        <Stack>
+        <Box paddingLeft={5} paddingRight={5}>
             <DoggieCard
                 primaryColor={parseInt(doggie.attributes[0]['Primary Color'])} 
                 secondaryColor={parseInt(doggie.attributes[0]['Secondary Color'])} 
@@ -89,12 +94,81 @@ const Doggie = () =>{
                 animationType={parseInt(doggie.attributes[0]['Animation Type'])}
                 secret={parseInt(doggie.attributes[0]['Secret'])}
             />
-            <Box display='flex'>
-                <Text>ONEDoggie #{tokenId}</Text>
-                <Text marginLeft={"auto"}>Gen: {doggie.generation}</Text>
-            </Box>
-            <Text>DNA: {doggie.dna} 🐾</Text>
         </Box>
+        <Button 
+          onClick={transfer} 
+          disabled={account !== doggie.owner} 
+          colorScheme="green"
+          isLoading={transfering}
+        >
+          {account !== doggie.owner ? "You are not the owner." : "Transfer"}
+        </Button>
+        </Stack>
+        <Stack width="100%" spacing={5}>
+        <Heading>{doggie.doggieName}</Heading>
+        <Text fontSize="xl">{doggie.description}</Text>
+        <Text fontWeight={600}>
+          Token ID:
+          <Tag ml={2} colorScheme="green">
+            {doggie.tokenId}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
+          Generation:
+          <Tag ml={2} colorScheme="green">
+            {doggie.generation}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
+          Dad ID:
+          <Tag ml={2} colorScheme="green">
+            {doggie.momId}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
+          Mom ID:
+          <Tag ml={2} colorScheme="green">
+            {doggie.dadId}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
+          Birth time:
+          <Tag ml={2} colorScheme="green">
+            {doggie.birthTime}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
+          DNA:
+          <Tag ml={2} colorScheme="green">
+            {doggie.dna}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
+          Owner:
+          <Tag ml={2} colorScheme="green">
+            {doggie.owner}
+          </Tag>
+        </Text>
+        
+        <Table size="sm" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Attribute</Th>
+              <Th>value</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {Object.entries(doggie.attributes[0]).map(([key, value]) => (
+              <Tr key={key}>
+                <Td>{key}</Td>
+                <Td>
+                  <Tag>{value}</Tag>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Stack>
     </Stack>
   );
 }
