@@ -136,7 +136,7 @@ import {
         setDoggieId(event.returnValues.doggieId);
         setDadId(event.returnValues.dadId);
         setMomId(event.returnValues.momId);
-        setDnaMint(event.returnValues.genes);
+        setDnaMint(event.returnValues.dna);
         setDoggieOwner(event.returnValues.owner);
         setMintedName(event.returnValues.doggieName);
         onOpen();
@@ -365,7 +365,7 @@ import {
               Dad ID: {dadId}
             </Text>
             <Text>
-              Genes: {dnaMint}
+              DNA: {dnaMint}
             </Text>
             <Text>
               Owner (you!): {doggieOwner}

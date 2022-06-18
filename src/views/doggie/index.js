@@ -213,13 +213,13 @@ const Doggie = () =>{
         <Text fontWeight={600}>
           Dad ID:
           <Tag ml={2} colorScheme="green">
-            {doggie.momId}
+            {doggie.dadId}
           </Tag>
         </Text>
         <Text fontWeight={600}>
           Mom ID:
           <Tag ml={2} colorScheme="green">
-            {doggie.dadId}
+            {doggie.momId}
           </Tag>
         </Text>
         <Text fontWeight={600}>
