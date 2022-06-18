@@ -3,6 +3,7 @@ import {
     Heading,
     Text,
     Button,
+    ButtonGroup,
     Tag,
     useToast,
     Box,
@@ -22,10 +23,10 @@ import {
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import DoggieCard from "../../components/doggie-card";
-  import Loading from "../../components/loading";
   import useOneDoggies from "../../hooks/useOneDoggies";
-  import { getDoggieData, useOneDoggiesData } from "../../hooks/useOneDoggiesData";
-  import { useState, useCallback, useEffect } from "react";
+  import { useOneDoggiesData } from "../../hooks/useOneDoggiesData";
+  import { useState } from "react";
+  import dogNames from "dog-names";
 
 const Breed = () => {
     const { active, account } = useWeb3React();
@@ -36,7 +37,10 @@ const Breed = () => {
       });
     const [ breeding, setBreeding ] = useState(false);
     const [ newName, setNewName ] =useState("");
-    
+    const [ suggestedName, setSuggestedName ] = useState(dogNames.allRandom());
+    const handleChange = (event) => setNewName(event.target.value);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const [loadingGetDoggie, setLoadingGetDoggie] = useState(false);
 
     //Dad variables
@@ -80,16 +84,12 @@ const Breed = () => {
     const [doggieMom, setDoggieMom] = useState("");
 
     //Breeded Modal variables
-    const { isOpen: isOpenBreeded, onOpen: onOpenBreeded, onClose: onCloseBreeded } = useDisclosure();
-
     const [ doggieId, setDoggieId ] = useState(0);
     const [ momIdMint, setMomIdMint ] = useState(0);
     const [ dadIdMint, setDadIdMint ] = useState(0);
     const [ dnaMint, setDnaMint ] = useState(0);
     const [ doggieOwner, setDoggieOwner ] = useState(0);
     const [ mintedName, setMintedName ] = useState(0);
-
-    const [doggieName, setDoggieName] = useState("");
     
     function checkIds(){
         if (dadId === momId){
@@ -99,6 +99,13 @@ const Breed = () => {
             return true
         }
     }
+
+    function randomName(){
+        setNewName(dogNames.allRandom());
+      }
+      function randomSuggestion(){
+        setSuggestedName(dogNames.allRandom());
+      }
 
     function getDoggieIndex(tokenId){
         return doggies.findIndex(obj => obj.tokenId === tokenId);
@@ -175,7 +182,7 @@ const Breed = () => {
             });
             setBreeding(false);
         } else {
-            oneDoggies.methods.breed(dadId, momId, doggieName).send({
+            oneDoggies.methods.breed(dadId, momId, newName).send({
                 from: account
             })
             .on("error", (error) => {
@@ -209,10 +216,10 @@ const Breed = () => {
                 setDoggieId(event.returnValues.doggieId);
                 setDadIdMint(event.returnValues.dadId);
                 setMomIdMint(event.returnValues.momId);
-                setDnaMint(event.returnValues.genes);
+                setDnaMint(event.returnValues.dna);
                 setDoggieOwner(event.returnValues.owner);
                 setMintedName(event.returnValues.doggieName);
-                onOpenBreeded();
+                onOpen();
 
             })
             .on("error", (error) => {
@@ -411,6 +418,76 @@ const Breed = () => {
                         <Text></Text>
                     )}
             </SimpleGrid>
+            {hasSelectedMom && hasSelectedDad ? (
+                <Center>
+                    <Stack>
+                        <Heading
+                            lineHeight={1.1}
+                            fontWeight={600}
+                            fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
+                            spacing={10}
+                        >
+                            <Text as={"span"} color={"blue.400"}>
+                            Give your new doggie a name!
+                            </Text>
+                        </Heading>
+                        <Text>Name: (you can change it later) </Text>
+                        <ButtonGroup>
+                            <Input placeholder={`How about "${suggestedName}"?`} value={newName} onChange={handleChange} width="100%"/>
+                            <Button colorScheme='green' size="md" width="65%" justifyContent="flex-start" onClick={() => randomName()}>Random Name</Button>
+                            <Button colorScheme='teal' size="md" width="85%" justifyContent="flex-start" onClick={() => randomSuggestion()}>Random Suggestion</Button>
+                        </ButtonGroup>
+                        <Text spacing={10}></Text>
+                        <Center>
+                            <Button colorScheme='green' size="md" width="70%" justifyContent="center" onClick={() => breed()}>Breed! 🐶❤️🐶</Button>
+                        </Center>
+                        
+                    </Stack>
+                </Center>
+            ) : (
+                <Text></Text>
+            )}
+        
+        <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+            <ModalHeader>Doggies successfully breeded!</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+                <Text fontWeight='bold' mb='1rem'>
+                Your doggie was successfully minted with the following atributes: 
+                </Text>
+                <Text>
+                Name: {mintedName}
+                </Text>
+                <Text>
+                ID: {doggieId}
+                </Text>
+                <Text>
+                Mom ID: {momIdMint}
+                </Text>
+                <Text>
+                Dad ID: {dadIdMint}
+                </Text>
+                <Text>
+                DNA: {dnaMint}
+                </Text>
+                <Text>
+                Owner (you!): {doggieOwner}
+                </Text>
+                <Text fontWeight='bold' mb='1rem'>
+                Congratulations! 🐶
+                </Text>
+            </ModalBody>
+
+            <ModalFooter>
+                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                Close
+                </Button>
+            </ModalFooter>
+            </ModalContent>
+        </Modal>
+
         </Stack>
     );
 }
