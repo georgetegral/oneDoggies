@@ -306,21 +306,20 @@ contract DoggiesContract is IERC721, Ownable {
         //Mom Priority
         if(priority == 0){
             primaryColor = _getDnaSection(_momDna, 12, 2);
-            secondaryColor = _getDnaSection(_dadDna, 10, 2);
             stomachColor = _getDnaSection(_dadDna, 8, 2);
             animation = _getDnaSection(_momDna, 1, 1);
         }
         //Dad Priority
         else{
             primaryColor = _getDnaSection(_dadDna, 12, 2);
-            secondaryColor = _getDnaSection(_momDna, 10, 2);
             stomachColor = _getDnaSection(_momDna, 8, 2);
             animation = _getDnaSection(_dadDna, 1, 1);
         }
-        backgroundColor = _getRandomNumber(10,89);
+        secondaryColor = _getRandomNumber(10,89);
+        backgroundColor = _getRandomNumber2(10,89);
         locketColor = _getRandomNumber(1,2);
-        beltColor = _getRandomNumber(3,9);
-        dotsColor = _getRandomNumber(10,89);
+        beltColor = _getRandomNumber2(3,9);
+        dotsColor = _getRandomNumber3(10,89);
         secret = _getRandomNumber(1,9);
 
         finalDna = primaryColor     *1000000000000;
@@ -343,6 +342,15 @@ contract DoggiesContract is IERC721, Ownable {
 
     function _getRandomNumber(uint256 lowerRange, uint256 upperRange) internal view returns (uint256) {
         uint randomnumber = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, block.number))) % upperRange;
+        return randomnumber + lowerRange;    
+    }
+
+    function _getRandomNumber2(uint256 lowerRange, uint256 upperRange) internal view returns (uint256) {
+        uint randomnumber = uint(keccak256(abi.encodePacked(block.number, msg.value, tx.origin))) % upperRange;
+        return randomnumber + lowerRange;    
+    }
+    function _getRandomNumber3(uint256 lowerRange, uint256 upperRange) internal view returns (uint256) {
+        uint randomnumber = uint(keccak256(abi.encodePacked(tx.gasprice, msg.data, block.gaslimit))) % upperRange;
         return randomnumber + lowerRange;    
     }
 

@@ -1,6 +1,6 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0x387B0a89406c4F793C28c1De08F39b151152b3a6'
+        1337: '0x664Caa59d42A3c5fD20440C01a61b2f1FE855A7f'
     },
     abi: [
       {
