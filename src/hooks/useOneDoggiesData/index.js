@@ -37,6 +37,18 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
     }
 }
 
+const getOfferData = async ({ marketplace, tokenId }) => {
+    const offerData = await marketplace.methods.getOffer(tokenId).call();
+
+    const seller = offerData.seller;
+    const price = offerData.price;
+    const index = offerData.index;
+    const _tokenId = offerData.tokenId;
+    const active = offerData.active;
+
+    return {seller, price, index, _tokenId, active}
+}
+
 //Plural
 const useOneDoggiesData = ({ owner = null} = {}) => {
     const [doggies, setDoggies] = useState([]);
@@ -147,6 +159,7 @@ const useIsApprovedForAll = ({ owner = null} = {}) => {
 //Get all tokens on sale on the marketplace
 const useGetAllTokensOnSale = () => {
     const [doggies, setDoggies] = useState([]);
+    const [offers, setOffers] = useState([]);
     const [loading, setLoading] = useState(true);
     const oneDoggies = useOneDoggies();
     const marketplace = useMarketplace();
@@ -154,18 +167,20 @@ const useGetAllTokensOnSale = () => {
     const update = useCallback(async () => {
         if(oneDoggies && marketplace != null){
             setLoading(true);
-            let tokenIds;
-
+            
             const tokensOnSale = await marketplace.methods.getAllTokenOnSale().call();
-            tokenIds = new Array(Number(tokensOnSale)).fill().map((_, index) => index);
-
-            const doggiesPromise = tokenIds.map((tokenId) =>
+            const doggiesPromise = tokensOnSale.map((tokenId) =>
                 getDoggieData({ tokenId, oneDoggies })
+            );
+
+            const offersPromise = tokensOnSale.map((tokenId) =>
+                getOfferData({ tokenId, marketplace})
             );
     
             const doggies = await Promise.all(doggiesPromise);
-    
+            const offersData = await Promise.all(offersPromise);
             setDoggies(doggies);
+            setOffers(offersData);
             setLoading(false);
         }
     }, [oneDoggies, marketplace]);
@@ -174,12 +189,40 @@ const useGetAllTokensOnSale = () => {
         update();
     }, [update]);
 
-    console.log(doggies);
     return {
         loading,
         doggies,
+        offers,
         update
     };
 }
 
-export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale };
+//Get offer of individual doggie
+const useGetOffer = (tokenId = null) => {
+    const [offer, setOffer] = useState();
+    const [loading, setLoading] = useState(true);
+    const marketplace = useMarketplace();
+
+    const update = useCallback(async () => {
+        if(tokenId && marketplace != null){
+            setLoading(true);
+
+            const getOffer = await getOfferData({ marketplace, tokenId });
+
+            setOffer(getOffer);
+            setLoading(false);
+        }
+    }, [marketplace]);
+
+    useEffect(() => {
+        update();
+    }, [update]);
+
+    return {
+        loading,
+        offer,
+        update
+    };
+}
+
+export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer };
