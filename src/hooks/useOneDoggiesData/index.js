@@ -168,7 +168,10 @@ const useGetAllTokensOnSale = () => {
         if(oneDoggies && marketplace != null){
             setLoading(true);
             
-            const tokensOnSale = await marketplace.methods.getAllTokenOnSale().call();
+            var tokensOnSale = await marketplace.methods.getAllTokenOnSale().call();
+            //Remove inactive offers
+            tokensOnSale = tokensOnSale.filter(function(val) { return val !== '0' });
+
             const doggiesPromise = tokensOnSale.map((tokenId) =>
                 getDoggieData({ tokenId, oneDoggies })
             );
