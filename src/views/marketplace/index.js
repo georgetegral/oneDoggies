@@ -25,7 +25,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import DoggieCard from "../../components/doggie-card";
 import Loading from "../../components/loading";
 import RequestAccess from "../../components/request-access";
-import { useIsApprovedForAll, useGetAllTokensOnSale } from "../../hooks/useOneDoggiesData";
+import { useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer } from "../../hooks/useOneDoggiesData";
 import useOneDoggies from "../../hooks/useOneDoggies";
 import useMarketplace from "../../hooks/useMarketplace";
 import {useState} from "react";
@@ -42,8 +42,7 @@ const Marketplace = () => {
     });
     const [approvingForAll, setApprovingForAll] = useState(false);
 
-    const { loading: loadingDoggies, doggies, update: updateDoggies} = useGetAllTokensOnSale();
-    
+    const { loading: loadingDoggies, doggies, offers, update: updateDoggies} = useGetAllTokensOnSale();
     const setApprovalForAll = () => {
         if(oneDoggies && marketplace != null){
             setApprovingForAll(true);
@@ -93,6 +92,15 @@ const Marketplace = () => {
         }
     }
 
+    const getPrice = (id) =>{
+        var price = 0;
+        if (offers != null){
+            var currentItem = offers.find(offer => offer._tokenId == id);
+            price = currentItem.price;
+        }
+        return price;
+    }
+
     if (!active) return <RequestAccess />;
 
     return (
@@ -138,7 +146,11 @@ const Marketplace = () => {
                                     <Text>ONEDoggie #{tokenId} 🐾</Text>
                                     <Text marginLeft={"auto"}>Gen: {generation}</Text>
                                 </Box>
-                                <Text>Name: {doggieName}</Text>
+                                <Box display='flex'>
+                                    <Text>Name: {doggieName}</Text>
+                                    <Text marginLeft={"auto"}>Price: {getPrice(tokenId)} ONE</Text>
+                                </Box>
+                                
                             </Box>
                         </LinkOverlay>
                     </LinkBox>
