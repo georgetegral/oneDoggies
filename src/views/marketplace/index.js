@@ -11,6 +11,7 @@ import {
     FormControl,
     Box,
     Text,
+    Heading,
     useToast,
     Alert,
     AlertIcon,
@@ -24,7 +25,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import DoggieCard from "../../components/doggie-card";
 import Loading from "../../components/loading";
 import RequestAccess from "../../components/request-access";
-import { useIsApprovedForAll } from "../../hooks/useOneDoggiesData";
+import { useIsApprovedForAll, useGetAllTokensOnSale } from "../../hooks/useOneDoggiesData";
 import useOneDoggies from "../../hooks/useOneDoggies";
 import useMarketplace from "../../hooks/useMarketplace";
 import {useState} from "react";
@@ -40,6 +41,8 @@ const Marketplace = () => {
         owner: account
     });
     const [approvingForAll, setApprovingForAll] = useState(false);
+
+    const { loading: loadingDoggies, doggies, update: updateDoggies} = useGetAllTokensOnSale();
     
     const setApprovalForAll = () => {
         if(oneDoggies && marketplace != null){
@@ -94,8 +97,54 @@ const Marketplace = () => {
 
     return (
         <Stack>
+            <Heading
+                lineHeight={1.1}
+                fontWeight={600}
+                fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+            >
+                <Text as={"span"} color={"blue.400"}>
+                Marketplace
+                </Text>
+          </Heading>
        {approved ? (
-            <Text>You are approved!</Text>
+            <Stack>
+                <Heading
+                    lineHeight={1.1}
+                    fontWeight={600}
+                    fontSize={{ base: "2xl", sm: "3xl", lg: "4xl" }}
+                    spacing={10}
+                >
+                    <Text as={"span"} color={"blue.400"}>
+                        Look at all this amazing doggies for sale!
+                    </Text>
+                </Heading>
+                <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
+                {doggies.map(({tokenId, attributes, doggieName, generation}) =>(
+                    <LinkBox key={tokenId}>
+                        <LinkOverlay href={`#/doggies/${tokenId}`}>
+                            <Box paddingLeft={5} paddingRight={5} borderWidth="1px">
+                                <DoggieCard
+                                    primaryColor={parseInt(attributes[0]['Primary Color'])} 
+                                    secondaryColor={parseInt(attributes[0]['Secondary Color'])} 
+                                    stomachColor={parseInt(attributes[0]['Stomach Color'])} 
+                                    backgroundColor={parseInt(attributes[0]['Background Color'])}
+                                    locketColor={parseInt(attributes[0]['Locket Color'])}
+                                    beltColor={parseInt(attributes[0]['Belt Color'])}
+                                    dotsColor={parseInt(attributes[0]['Dots Color'])}
+                                    animationType={parseInt(attributes[0]['Animation Type'])}
+                                    secret={parseInt(attributes[0]['Secret'])}
+                                />
+                                <Box display='flex'>
+                                    <Text>ONEDoggie #{tokenId} 🐾</Text>
+                                    <Text marginLeft={"auto"}>Gen: {generation}</Text>
+                                </Box>
+                                <Text>Name: {doggieName}</Text>
+                            </Box>
+                        </LinkOverlay>
+                    </LinkBox>
+                ))}
+                </Grid>
+            </Stack>
        ) : (
         <Alert
             status="warning"

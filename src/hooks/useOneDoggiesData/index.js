@@ -119,6 +119,7 @@ const useOneDoggieData = (tokenId = null) => {
     };
 };
 
+//Give approval to Marketplace
 const useIsApprovedForAll = ({ owner = null} = {}) => {
     const [approved, setApproved] = useState({});
     const [loading, setLoading] = useState(true);
@@ -142,6 +143,43 @@ const useIsApprovedForAll = ({ owner = null} = {}) => {
 
     return { loading, approved, update };
 };
-  
 
-export { useOneDoggiesData, useOneDoggieData, useIsApprovedForAll };
+//Get all tokens on sale on the marketplace
+const useGetAllTokensOnSale = () => {
+    const [doggies, setDoggies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const oneDoggies = useOneDoggies();
+    const marketplace = useMarketplace();
+
+    const update = useCallback(async () => {
+        if(oneDoggies && marketplace != null){
+            setLoading(true);
+            let tokenIds;
+
+            const tokensOnSale = await marketplace.methods.getAllTokenOnSale().call();
+            tokenIds = new Array(Number(tokensOnSale)).fill().map((_, index) => index);
+
+            const doggiesPromise = tokenIds.map((tokenId) =>
+                getDoggieData({ tokenId, oneDoggies })
+            );
+    
+            const doggies = await Promise.all(doggiesPromise);
+    
+            setDoggies(doggies);
+            setLoading(false);
+        }
+    }, [oneDoggies, marketplace]);
+
+    useEffect(() => {
+        update();
+    }, [update]);
+
+    console.log(doggies);
+    return {
+        loading,
+        doggies,
+        update
+    };
+}
+
+export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale };
