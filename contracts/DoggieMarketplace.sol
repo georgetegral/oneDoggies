@@ -73,7 +73,7 @@ contract DoggieMarketplace is Ownable {
     function setOffer(uint256 _price, uint256 _tokenId) public {
         require(_ownsDoggie(msg.sender, _tokenId), "You are not the owner of that doggie");
         require(tokenIdToOffer[_tokenId].active == false, "You can't sell twice the same offers");
-        require(_DoggiesContract.isApprovedForAll(msg.sender, address(this)), "Contract needs to be approved to transfer the kitty in the future");
+        require(_DoggiesContract.isApprovedForAll(msg.sender, address(this)), "Contract needs to be approved to transfer the doggie in the future");
     
         Offer memory _offer = Offer({
             seller: payable(msg.sender),
@@ -88,7 +88,6 @@ contract DoggieMarketplace is Ownable {
 
         emit MarketTransaction("Create offer", msg.sender, _tokenId); 
     }
-
     //Remove an existing offer
     function removeOffer(uint256 _tokenId) public {
         Offer memory offer = tokenIdToOffer[_tokenId];
@@ -101,13 +100,13 @@ contract DoggieMarketplace is Ownable {
         emit MarketTransaction("Remove offer", msg.sender, _tokenId);
     }
 
-    //Accept an offer and buy the kitty
-    function buyKitty(uint256 _tokenId) public payable {
+    //Accept an offer and buy the nft
+    function buyDoggie(uint256 _tokenId) public payable {
         Offer memory offer = tokenIdToOffer[_tokenId];
         require (msg.value == offer.price, "The price is incorrect");
         require(tokenIdToOffer[_tokenId].active == true, "No active order present");
 
-        //Important: delete the kitty from the mapping before paying out to prevent reentrancy attack
+        //Important: delete the doggie from the mapping before paying out to prevent reentrancy attack
         delete tokenIdToOffer[_tokenId];
         offers[offer.index].active = false;
 
