@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import useOneDoggies from "../useOneDoggies";
+import useMarketplace from '../useMarketplace';
 
 const getDoggieData = async ({ oneDoggies, tokenId }) => {
     const [
@@ -110,13 +111,37 @@ const useOneDoggieData = (tokenId = null) => {
     useEffect(() => {
       update();
     }, [update]);
-  
+
     return {
       loading,
       doggie,
       update,
     };
 };
+
+const useIsApprovedForAll = ({ owner = null} = {}) => {
+    const [approved, setApproved] = useState({});
+    const [loading, setLoading] = useState(true);
+    const oneDoggies = useOneDoggies();
+    const marketplace = useMarketplace();
+
+    const update = useCallback( async () => {
+        if(oneDoggies && owner && marketplace != null){
+            setLoading(true);
+            const isApproved = await oneDoggies.methods.isApprovedForAll(owner, marketplace._address).call();
+
+            setApproved(isApproved);
+
+            setLoading(false);
+        }
+    }, [oneDoggies, marketplace, owner]);
+
+    useEffect(() => {
+        update();
+      }, [update]);
+
+    return { loading, approved, update };
+};
   
 
-export { useOneDoggiesData, useOneDoggieData };
+export { useOneDoggiesData, useOneDoggieData, useIsApprovedForAll };
