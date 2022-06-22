@@ -52,6 +52,8 @@ const useOneDoggiesData = ({ owner = null} = {}) => {
 
                 const totalSupply = await oneDoggies.methods.totalSupply().call();
                 tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index);
+                //Remove doggie #0
+                tokenIds.shift();
 
             } else {
                 const balanceOf = await oneDoggies.methods.balanceOf(owner).call();
