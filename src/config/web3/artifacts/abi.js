@@ -1,8 +1,13 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0x664Caa59d42A3c5fD20440C01a61b2f1FE855A7f'
+        1337: '0x81Ea8c06998B0765B4a5D7943598Fb8DF579CcD5'
     },
     abi: [
+      {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
       {
         "anonymous": false,
         "inputs": [

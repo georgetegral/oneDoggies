@@ -56,7 +56,7 @@ contract DoggiesContract is IERC721, Ownable {
     uint256 public gen0Counter;
 
     constructor(){
-        _createDoggie(0,0,0, 10111213132311, address(0), "Bartola"); //Added so that no doggie has id of zero
+        _createDoggie(0,0,0,0, address(0), "Null"); //Added so that no doggie has id of zero
     }
 
     function breed( uint256 _dadId, uint256 _momId, string memory _doggieName) public returns (uint256) {
