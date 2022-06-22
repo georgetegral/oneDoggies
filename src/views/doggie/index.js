@@ -13,6 +13,9 @@ import {
     useToast,
     Box,
     Input,
+    InputGroup,
+    InputLeftAddon,
+    InputRightAddon,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -30,6 +33,7 @@ import {
   import Loading from "../../components/loading";
   import { useState } from "react";
   import useOneDoggies from "../../hooks/useOneDoggies";
+  import useMarketplace from "../../hooks/useMarketplace";
   import dogNames from "dog-names";
 
 const Doggie = () =>{
@@ -38,6 +42,7 @@ const Doggie = () =>{
     const { loading, doggie, update } = useOneDoggieData(tokenId);
     const toast = useToast();
     const oneDoggies = useOneDoggies();
+    const marketplace = useMarketplace();
 
     //Transfer Modal variables
     const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
@@ -52,8 +57,14 @@ const Doggie = () =>{
     const handleRenameChange = (event) => setRename(event.target.value);
     const [ renaming, setRenaming ] = useState(false);
 
+    //Sell Modal Variables
+    const { isOpen: isOpenSell, onOpen: onOpenSell, onClose: onCloseSell } = useDisclosure();
+    const [ price, setPrice ] = useState("");
+    const handlePriceChange = (event) => setPrice(event.target.value);
+    const [ selling, setSelling ] = useState(false);
+
     function randomSuggestion(){
-    setSuggestedName(dogNames.allRandom());
+      setSuggestedName(dogNames.allRandom());
     }
 
     const transfer = () => {
@@ -154,6 +165,50 @@ const Doggie = () =>{
         }
     }
 
+    const sell = () => {
+      setSelling(true);
+      if(!price){
+        toast({
+            title: "Empty price.",
+            description: "Your selling price cannot be empty!",
+            status: "error",
+            isClosable: true,
+        });
+        setSelling(false);
+      } else{
+        marketplace.methods.setOffer(price, tokenId).send({
+          from: account
+        })
+        .on("error", (error) => {
+            toast({
+                title: "Transaction failed",
+                description: error.message,
+                status: "error",
+                isClosable: true,
+            })
+        })
+        .on("transactionHash", (txHash) => {
+            toast({
+                title: "Transaction sent.",
+                description: txHash,
+                status: "info",
+                isClosable: true,
+            });
+        })
+        .on("receipt", () => {
+            toast({
+                title: "Transaction confirmed.",
+                description: `This Doggie's has been put in the marketplace for ${price} ONE!`,
+                status: "success",
+                isClosable: true,
+            });
+            onCloseSell();
+            update();
+        });
+        setSelling(false);
+      }
+    }
+
   if (!active) return <RequestAccess />;
 
   if (loading) return <Loading />;
@@ -193,6 +248,14 @@ const Doggie = () =>{
           isLoading={renaming}
         >
           {account !== doggie.owner ? "You are not the owner." : "Rename"}
+        </Button>
+        <Button 
+          onClick={onOpenSell} 
+          disabled={account !== doggie.owner} 
+          colorScheme="yellow"
+          isLoading={selling}
+        >
+          {account !== doggie.owner ? "You are not the owner." : "Sell"}
         </Button>
         </Stack>
         <Stack width="100%" spacing={5}>
@@ -315,6 +378,39 @@ const Doggie = () =>{
               Rename
             </Button>
             <Button colorScheme='red' mr={3} onClick={onCloseRename}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal blockScrollOnMount={false} isOpen={isOpenSell} onClose={onCloseSell} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Sell your doggie.</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody >
+            <Text fontWeight='bold'>
+                This will put your Doggie on the marketplace.
+            </Text>
+            <InputGroup >
+              <InputLeftAddon children='Price:' />
+              <Input 
+                  placeholder={`Set your price`}
+                  mb='1rem'
+                  value={price}
+                  onChange={handlePriceChange}
+              />
+              <InputRightAddon children='ONE' />
+            </InputGroup>
+            <Text fontWeight='bold' mb='1rem'>
+              Are you sure you want sell it?
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='green' mr={3} onClick={sell}>
+              Sell
+            </Button>
+            <Button colorScheme='red' mr={3} onClick={onCloseSell}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
