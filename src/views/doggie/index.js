@@ -28,7 +28,7 @@ import {
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import DoggieCard from "../../components/doggie-card";
-  import { useOneDoggieData } from "../../hooks/useOneDoggiesData";
+  import { useOneDoggieData, useGetOffer } from "../../hooks/useOneDoggiesData";
   import { useParams } from "react-router-dom";
   import Loading from "../../components/loading";
   import { useState } from "react";
@@ -40,6 +40,7 @@ const Doggie = () =>{
     const { active, account, library } = useWeb3React();
     const { tokenId } = useParams();
     const { loading, doggie, update } = useOneDoggieData(tokenId);
+    const { loading: loadingOffer, offer, update: updateOffer } = useGetOffer(tokenId);
     const toast = useToast();
     const oneDoggies = useOneDoggies();
     const marketplace = useMarketplace();
@@ -62,6 +63,10 @@ const Doggie = () =>{
     const [ price, setPrice ] = useState("");
     const handlePriceChange = (event) => setPrice(event.target.value);
     const [ selling, setSelling ] = useState(false);
+
+    //Remove Offer Modal Variables
+    const { isOpen: isOpenRemoveOffer, onOpen: onOpenRemoveOffer, onClose: onCloseRemoveOffer } = useDisclosure();
+    const [ removing, setRemoving ] = useState(false);
 
     function randomSuggestion(){
       setSuggestedName(dogNames.allRandom());
@@ -175,7 +180,15 @@ const Doggie = () =>{
             isClosable: true,
         });
         setSelling(false);
-      } else{
+      } else if (price <= 0) {
+        toast({
+          title: "Empty price.",
+          description: "Your selling price cannot be zero or less!",
+          status: "error",
+          isClosable: true,
+        });
+        setSelling(false);
+      } else {
         marketplace.methods.setOffer(price, tokenId).send({
           from: account
         })
@@ -203,10 +216,76 @@ const Doggie = () =>{
                 isClosable: true,
             });
             onCloseSell();
-            update();
+            
         });
-        setSelling(false);
+
+        marketplace.events
+        .MarketTransaction()
+        .on('data', function(event){
+          updateOffer();
+        })
+        .on("error", (error) => {
+            toast({
+                title: "Market Transaction failed",
+                description: error.message,
+                status: "error",
+                isClosable: true,
+            })
+        })
+        
+        
       }
+      setSelling(false);
+    }
+
+    const removeOffer = () => {
+      setRemoving(true);
+
+      marketplace.methods.removeOffer(tokenId).send({
+        from: account
+      })
+      .on("error", (error) => {
+          toast({
+              title: "Transaction failed",
+              description: error.message,
+              status: "error",
+              isClosable: true,
+          })
+      })
+      .on("transactionHash", (txHash) => {
+          toast({
+              title: "Transaction sent.",
+              description: txHash,
+              status: "info",
+              isClosable: true,
+          });
+      })
+      .on("receipt", () => {
+          toast({
+              title: "Transaction confirmed.",
+              description: `This Doggie's has been removed from the marketplace!`,
+              status: "success",
+              isClosable: true,
+          });
+          onCloseRemoveOffer();
+          
+      });
+
+      marketplace.events
+      .MarketTransaction()
+      .on('data', function(event){
+        updateOffer();
+      })
+      .on("error", (error) => {
+          toast({
+              title: "Market Transaction failed",
+              description: error.message,
+              status: "error",
+              isClosable: true,
+          })
+      })
+
+      setRemoving(false);
     }
 
   if (!active) return <RequestAccess />;
@@ -249,14 +328,26 @@ const Doggie = () =>{
         >
           {account !== doggie.owner ? "You are not the owner." : "Rename"}
         </Button>
-        <Button 
-          onClick={onOpenSell} 
-          disabled={account !== doggie.owner} 
-          colorScheme="yellow"
-          isLoading={selling}
-        >
-          {account !== doggie.owner ? "You are not the owner." : "Sell"}
-        </Button>
+        {offer != null && offer.active ? (
+          <Button 
+            onClick={onOpenRemoveOffer} 
+            disabled={account !== doggie.owner} 
+            colorScheme="red"
+            isLoading={removing}
+          >
+            {account !== doggie.owner ? "You are not the owner." : "Remove Offer"}
+          </Button>
+        ) : (
+          <Button 
+            onClick={onOpenSell} 
+            disabled={account !== doggie.owner} 
+            colorScheme="yellow"
+            isLoading={selling}
+          >
+            {account !== doggie.owner ? "You are not the owner." : "Sell"}
+          </Button>
+        )}
+        
         </Stack>
         <Stack width="100%" spacing={5}>
         <Heading>{doggie.doggieName}</Heading>
@@ -402,7 +493,7 @@ const Doggie = () =>{
               <InputRightAddon children='ONE' />
             </InputGroup>
             <Text fontWeight='bold' mb='1rem'>
-              Are you sure you want sell it?
+              Are you sure you want to sell it?
             </Text>
           </ModalBody>
 
@@ -411,6 +502,29 @@ const Doggie = () =>{
               Sell
             </Button>
             <Button colorScheme='red' mr={3} onClick={onCloseSell}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal blockScrollOnMount={false} isOpen={isOpenRemoveOffer} onClose={onCloseRemoveOffer} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Remove offer for your doggie.</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody >
+            <Text fontWeight='bold'>
+                This remove your Doggie off the marketplace.
+            </Text>
+            <Text fontWeight='bold' mb='1rem'>
+              Are you sure you want to remove the offer?
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='green' mr={3} onClick={removeOffer}>
+              Remove
+            </Button>
+            <Button colorScheme='red' mr={3} onClick={onCloseRemoveOffer}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
