@@ -5,6 +5,7 @@ import Mint from './views/mint';
 import Doggies from './views/doggies';
 import Doggie from './views/doggie';
 import Breed from './views/breed';
+import Marketplace from './views/marketplace';
 import MainLayout from "./layouts/main";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="/doggies" element={<Doggies />}/>
         <Route path="/doggies/:tokenId" element={<Doggie />}/>
         <Route path="/breed" element={<Breed />}/>
+        <Route path="/marketplace" element={<Marketplace />}/>
       </Routes>
     </MainLayout>
     </>

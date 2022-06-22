@@ -29,6 +29,10 @@ const Links = [
   {
     name: "Breed",
     to: "/breed"
+  },
+  {
+    name: "Marketplace",
+    to: "/marketplace"
   }
 ];
 
