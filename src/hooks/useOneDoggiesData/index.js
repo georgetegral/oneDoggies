@@ -215,7 +215,7 @@ const useGetOffer = (tokenId = null) => {
             setOffer(getOffer);
             setLoading(false);
         }
-    }, [marketplace]);
+    }, [marketplace, tokenId]);
 
     useEffect(() => {
         update();
