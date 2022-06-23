@@ -12,6 +12,7 @@ import {
     Tag,
     useToast,
     Box,
+    Center,
     Input,
     InputGroup,
     InputLeftAddon,
@@ -67,6 +68,9 @@ const Doggie = () =>{
     //Remove Offer Modal Variables
     const { isOpen: isOpenRemoveOffer, onOpen: onOpenRemoveOffer, onClose: onCloseRemoveOffer } = useDisclosure();
     const [ removing, setRemoving ] = useState(false);
+
+    //Buy Variables
+    const [ buying, setBuying ] = useState(false);
 
     function randomSuggestion(){
       setSuggestedName(dogNames.allRandom());
@@ -288,9 +292,59 @@ const Doggie = () =>{
       setRemoving(false);
     }
 
+    const buy = () => {
+      setBuying(true);
+
+      marketplace.methods.buyDoggie(tokenId).send({
+        from: account
+      })
+      .on("error", (error) => {
+          toast({
+              title: "Transaction failed",
+              description: error.message,
+              status: "error",
+              isClosable: true,
+          });
+          setBuying(false);
+      })
+      .on("transactionHash", (txHash) => {
+          toast({
+              title: "Transaction sent.",
+              description: txHash,
+              status: "info",
+              isClosable: true,
+          });
+      })
+      .on("receipt", () => {
+          toast({
+              title: "Transaction confirmed.",
+              description: `Congratulations! You have bought this doggie!`,
+              status: "success",
+              isClosable: true,
+          });
+          
+      });
+      
+      marketplace.events
+      .MarketTransaction()
+        .on('data', function(event){
+          update();
+          updateOffer();
+        })
+        .on("error", (error) => {
+            toast({
+                title: "Market Transaction failed",
+                description: error.message,
+                status: "error",
+                isClosable: true,
+            })
+        })
+      setBuying(false);
+    }
+
   if (!active) return <RequestAccess />;
 
-  if (loading) return <Loading />;
+  if (loading || loadingOffer) return <Loading />;
 
   return (
     <Stack
@@ -328,24 +382,49 @@ const Doggie = () =>{
         >
           {account !== doggie.owner ? "You are not the owner." : "Rename"}
         </Button>
-        {offer != null && offer.active ? (
-          <Button 
-            onClick={onOpenRemoveOffer} 
-            disabled={account !== doggie.owner} 
-            colorScheme="red"
-            isLoading={removing}
-          >
-            {account !== doggie.owner ? "You are not the owner." : "Remove Offer"}
-          </Button>
-        ) : (
-          <Button 
-            onClick={onOpenSell} 
-            disabled={account !== doggie.owner} 
-            colorScheme="yellow"
-            isLoading={selling}
-          >
-            {account !== doggie.owner ? "You are not the owner." : "Sell"}
-          </Button>
+        {account === doggie.owner ? 
+          (offer != null && offer.active ? (
+            <Stack>
+              <Center><Text fontWeight={600}>Sell price: {offer.price} ONE</Text></Center>
+              <Button 
+                onClick={onOpenRemoveOffer} 
+                disabled={account !== doggie.owner} 
+                colorScheme="red"
+                isLoading={removing}
+              >
+                {account !== doggie.owner ? "You are not the owner." : "Remove Offer"}
+              </Button>
+            </Stack>
+          ) : (
+            <Button 
+              onClick={onOpenSell} 
+              disabled={account !== doggie.owner} 
+              colorScheme="yellow"
+              isLoading={selling}
+            >
+              {account !== doggie.owner ? "You are not the owner." : "Sell"}
+            </Button>
+          )) : (offer != null && offer.active ? (
+            <Stack>
+              <Center><Text fontWeight={600}>Sell price: {offer.price} ONE</Text></Center>
+              <Button 
+              onClick={buy} 
+              disabled={account === doggie.owner} 
+              colorScheme="green"
+              isLoading={buying}
+            >
+              {account === doggie.owner ? "The owner cannot buy it's own Doggie." : "Buy"}
+            </Button>
+            </Stack>
+          ) : (
+            <Button
+              disabled={true}
+              colorScheme="gray"
+            >
+              No offer available
+            </Button>
+          )
+          
         )}
         
         </Stack>
