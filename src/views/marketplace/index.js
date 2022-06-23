@@ -2,13 +2,7 @@ import { useWeb3React } from "@web3-react/core";
 import {
     Stack,
     Grid,
-    InputGroup,
-    InputLeftElement,
-    Input,
-    InputRightElement,
     Button,
-    FormHelperText,
-    FormControl,
     Box,
     Text,
     Heading,
@@ -17,19 +11,16 @@ import {
     AlertIcon,
     AlertTitle,
     AlertDescription,
-    CloseButton,
     LinkBox,
     LinkOverlay
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
 import DoggieCard from "../../components/doggie-card";
 import Loading from "../../components/loading";
 import RequestAccess from "../../components/request-access";
-import { useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer } from "../../hooks/useOneDoggiesData";
+import { useIsApprovedForAll, useGetAllTokensOnSale } from "../../hooks/useOneDoggiesData";
 import useOneDoggies from "../../hooks/useOneDoggies";
 import useMarketplace from "../../hooks/useMarketplace";
-import {useState} from "react";
-import {useNavigate, useLocation} from "react-router-dom";
+
 const Marketplace = () => {
     const { account, active } = useWeb3React();
     const oneDoggies = useOneDoggies();
@@ -40,12 +31,10 @@ const Marketplace = () => {
     const { loading, approved, update } = useIsApprovedForAll({
         owner: account
     });
-    const [approvingForAll, setApprovingForAll] = useState(false);
-
-    const { loading: loadingDoggies, doggies, offers, update: updateDoggies} = useGetAllTokensOnSale();
+    const { loading: loadingDoggies, doggies, offers } = useGetAllTokensOnSale();
     const setApprovalForAll = () => {
         if(oneDoggies && marketplace != null){
-            setApprovingForAll(true);
+
             oneDoggies.methods.setApprovalForAll(marketplace._address, true).send({
                 from: account
             })
@@ -88,19 +77,19 @@ const Marketplace = () => {
                 })
             })
 
-            setApprovingForAll(false);
         }
     }
 
     const getPrice = (id) =>{
         var price = 0;
         if (offers != null){
-            var currentItem = offers.find(offer => offer._tokenId == id);
+            var currentItem = offers.find(offer => offer._tokenId === id);
             price = currentItem.price;
         }
         return price;
     }
 
+    if (loading || loadingDoggies) return <Loading />;
     if (!active) return <RequestAccess />;
 
     return (
