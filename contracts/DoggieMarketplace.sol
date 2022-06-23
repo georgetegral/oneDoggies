@@ -71,6 +71,7 @@ contract DoggieMarketplace is Ownable {
 
     //Create a new offer based on the given tokenId and price
     function setOffer(uint256 _price, uint256 _tokenId) public {
+        require(_price >= 0.01 ether, "Doggie price should be greater than 0.01");
         require(_ownsDoggie(msg.sender, _tokenId), "You are not the owner of that doggie");
         require(tokenIdToOffer[_tokenId].active == false, "You can't sell twice the same offers");
         require(_DoggiesContract.isApprovedForAll(msg.sender, address(this)), "Contract needs to be approved to transfer the doggie in the future");
