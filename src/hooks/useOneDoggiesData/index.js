@@ -228,4 +228,31 @@ const useGetOffer = (tokenId = null) => {
     };
 }
 
-export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer };
+//Get remaining Gen0 doggies
+const useGetRemainingDoggies = () => {
+    const [remaining, setRemaining] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const oneDoggies = useOneDoggies();
+
+    const update = useCallback(async () => {
+        if(oneDoggies != null){
+            setLoading(true);
+            const totalSupply = await oneDoggies.methods.totalSupply().call();
+            const maxSupply = await oneDoggies.methods.CREATION_LIMIT_GEN0().call();
+            setRemaining(maxSupply - totalSupply);
+            setLoading(false);
+        }
+    }, [oneDoggies]);
+
+    useEffect(() => {
+        update();
+    }, [update]);
+
+    return {
+        loading,
+        remaining,
+        update
+    };
+}
+
+export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies };

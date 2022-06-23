@@ -23,6 +23,7 @@ import {
   } from "@chakra-ui/react";
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
+  import { useGetRemainingDoggies } from "../../hooks/useOneDoggiesData";
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import dogNames from "dog-names";
@@ -33,6 +34,7 @@ import {
     const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
     const { account, active } = useWeb3React();
     const toast = useToast();
+    const { remaining, update } = useGetRemainingDoggies();
 
     //Modal variables
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -139,6 +141,7 @@ import {
         setDoggieOwner(event.returnValues.owner);
         setMintedName(event.returnValues.doggieName);
         onOpen();
+        update();
 
       })
       .on("error", (error) => {
@@ -178,6 +181,7 @@ import {
           Select your Doggie's attributes!
         </Text>
       </Heading>
+      <Text>Hurry! There are only {remaining} Gen0 doggies left!</Text>
 
      <Center borderWidth="2px">
         <Stack p="3" >
