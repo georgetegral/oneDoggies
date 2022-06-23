@@ -22,7 +22,7 @@ import useOneDoggies from "../../hooks/useOneDoggies";
 import useMarketplace from "../../hooks/useMarketplace";
 
 const Marketplace = () => {
-    const { account, active } = useWeb3React();
+    const { account, active, library } = useWeb3React();
     const oneDoggies = useOneDoggies();
     const marketplace = useMarketplace();
     const toast = useToast();
@@ -86,7 +86,7 @@ const Marketplace = () => {
             var currentItem = offers.find(offer => offer._tokenId === id);
             price = currentItem.price;
         }
-        return price;
+        return library.utils.fromWei(price);
     }
 
     if (loading || loadingDoggies) return <Loading />;

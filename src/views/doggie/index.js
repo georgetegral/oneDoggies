@@ -192,8 +192,20 @@ const Doggie = () =>{
           isClosable: true,
         });
         setSelling(false);
+      } else if (price <= .01){
+        toast({
+          title: "Price too low.",
+          description: "Your selling price cannot be less than .01 ONE!",
+          status: "error",
+          isClosable: true,
+        });
+        setSelling(false);
       } else {
-        marketplace.methods.setOffer(price, tokenId).send({
+        //Convert price to wei
+        //1 ETH = 18 zeros wei
+        //.01 ETH = 16 zeros wei
+        var priceWei = library.utils.toWei(price);
+        marketplace.methods.setOffer(priceWei, tokenId).send({
           from: account
         })
         .on("error", (error) => {
@@ -293,10 +305,13 @@ const Doggie = () =>{
     }
 
     const buy = () => {
+      var sellPrice = offer.price;
+      console.log(sellPrice);
       setBuying(true);
 
       marketplace.methods.buyDoggie(tokenId).send({
-        from: account
+        from: account,
+        value: sellPrice
       })
       .on("error", (error) => {
           toast({
@@ -385,7 +400,7 @@ const Doggie = () =>{
         {account === doggie.owner ? 
           (offer != null && offer.active ? (
             <Stack>
-              <Center><Text fontWeight={600}>Sell price: {offer.price} ONE</Text></Center>
+              <Center><Text fontWeight={600}>Sell price: {library.utils.fromWei(offer.price)} ONE</Text></Center>
               <Button 
                 onClick={onOpenRemoveOffer} 
                 disabled={account !== doggie.owner} 
@@ -406,7 +421,7 @@ const Doggie = () =>{
             </Button>
           )) : (offer != null && offer.active ? (
             <Stack>
-              <Center><Text fontWeight={600}>Sell price: {offer.price} ONE</Text></Center>
+              <Center><Text fontWeight={600}>Sell price: {library.utils.fromWei(offer.price)} ONE</Text></Center>
               <Button 
               onClick={buy} 
               disabled={account === doggie.owner} 
