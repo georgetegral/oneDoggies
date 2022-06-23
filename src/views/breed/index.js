@@ -41,8 +41,6 @@ const Breed = () => {
     const handleChange = (event) => setNewName(event.target.value);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [loadingGetDoggie, setLoadingGetDoggie] = useState(false);
-
     //Dad variables
     const [dadId, setDadId] = useState("");
     const [hasSelectedDad, setHasSelectedDad] = useState(false);
@@ -61,7 +59,6 @@ const Breed = () => {
     const [momIdDad, setMomIdDad] = useState(0);
     const [dadIdDad, setDadIdDad] = useState(0);
     const [birthTimeDad, setBirthTimeDad] = useState(0);
-    const [doggieDad, setDoggieDad] = useState("");
 
     //Mom variables
     const [momId, setMomId] = useState("");
@@ -81,7 +78,6 @@ const Breed = () => {
     const [momIdMom, setMomIdMom] = useState(0);
     const [dadIdMom, setDadIdMom] = useState(0);
     const [birthTimeMom, setBirthTimeMom] = useState(0);
-    const [doggieMom, setDoggieMom] = useState("");
 
     //Breeded Modal variables
     const [ doggieId, setDoggieId ] = useState(0);
@@ -91,6 +87,11 @@ const Breed = () => {
     const [ doggieOwner, setDoggieOwner ] = useState(0);
     const [ mintedName, setMintedName ] = useState(0);
     
+    const convertDate = (date) => {
+        var newDate = new Date(date * 1000);
+        return newDate.toLocaleString();
+    }
+
     function checkIds(){
         if (dadId === momId){
             return false;
@@ -116,7 +117,6 @@ const Breed = () => {
             setDadId(tokenId);
             setHasSelectedDad(true);
             var idx = getDoggieIndex(tokenId);
-            setDoggieDad(doggies[idx]);
             
             setPrimaryColorDad(parseInt(doggies[idx].attributes[0]['Primary Color']));
             setSecondaryColorDad(parseInt(doggies[idx].attributes[0]['Secondary Color']));
@@ -136,7 +136,6 @@ const Breed = () => {
         }
         else{
             setDadId("");
-            setDoggieDad("");
             setHasSelectedDad(false);
         }
     }
@@ -146,7 +145,6 @@ const Breed = () => {
             setMomId(tokenId);
             setHasSelectedMom(true);
             var idx = getDoggieIndex(tokenId);
-            setDoggieMom(doggies[idx]);
             
             setPrimaryColorMom(parseInt(doggies[idx].attributes[0]['Primary Color']));
             setSecondaryColorMom(parseInt(doggies[idx].attributes[0]['Secondary Color']));
@@ -166,7 +164,6 @@ const Breed = () => {
         }
         else{
             setMomId("");
-            setDoggieMom("");
             setHasSelectedMom(false);
         }
     }
@@ -277,15 +274,15 @@ const Breed = () => {
             </Center>
             <Center>
                 <Select placeholder='Select the sire' width="50%" name="dadId" value={dadId} onChange={(e) => updateDad(e.target.value)}>
-                    {doggies.map(({tokenId, doggieName}) =>(
-                        <option value={tokenId} key={tokenId}>ID: #{tokenId} name: {doggieName}</option>
+                    {doggies.map(({tokenId, doggieName, generation}) =>(
+                        <option value={tokenId} key={tokenId}>ID: #{tokenId} name: {doggieName} Gen: {generation}</option>
                     ))}
                 </Select>
             </Center>
             <Center>
                 <Select placeholder='Select the dame' width="50%" name="momId" value={momId} onChange={(e) => updateMom(e.target.value)}>
-                    {doggies.map(({tokenId, doggieName}) =>(
-                        <option value={tokenId} key={tokenId}>ID: #{tokenId} name: {doggieName}</option>
+                    {doggies.map(({tokenId, doggieName, generation}) =>(
+                        <option value={tokenId} key={tokenId}>ID: #{tokenId} name: {doggieName} Gen: {generation}</option>
                     ))}
                 </Select>
             </Center>
@@ -339,7 +336,7 @@ const Breed = () => {
                         <Text fontWeight={600}>
                             Birth time:
                             <Tag ml={2} colorScheme="green">
-                                {birthTimeDad}
+                                {convertDate(birthTimeDad)}
                             </Tag>
                         </Text>
                         <Text fontWeight={600}>
@@ -403,7 +400,7 @@ const Breed = () => {
                             <Text fontWeight={600}>
                                 Birth time:
                                 <Tag ml={2} colorScheme="green">
-                                    {birthTimeMom}
+                                    {convertDate(birthTimeMom)}
                                 </Tag>
                             </Text>
                             <Text fontWeight={600}>
