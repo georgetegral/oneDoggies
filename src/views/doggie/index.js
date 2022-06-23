@@ -319,55 +319,64 @@ const Doggie = () =>{
 
     const buy = () => {
       var sellPrice = offer.price;
-      console.log(sellPrice);
       setBuying(true);
-
-      marketplace.methods.buyDoggie(tokenId).send({
-        from: account,
-        value: sellPrice
-      })
-      .on("error", (error) => {
-          toast({
-              title: "Transaction failed",
-              description: error.message,
-              status: "error",
-              isClosable: true,
-          });
-          setBuying(false);
-      })
-      .on("transactionHash", (txHash) => {
-          toast({
-              title: "Transaction sent",
-              description: txHash,
-              status: "info",
-              isClosable: true,
-          });
-      })
-      .on("receipt", () => {
-          toast({
-              title: "Transaction confirmed",
-              description: `Congratulations! You have bought this doggie!`,
-              status: "success",
-              isClosable: true,
-          });
-          
-      });
-      
-      marketplace.events
-      .MarketTransaction()
-        .on('data', function(event){
-          update();
-          updateOffer();
+      if (offer.seller === doggie.owner){
+        marketplace.methods.buyDoggie(tokenId).send({
+          from: account,
+          value: sellPrice
         })
         .on("error", (error) => {
             toast({
-                title: "Market Transaction failed",
+                title: "Transaction failed",
                 description: error.message,
                 status: "error",
                 isClosable: true,
-            })
+            });
+            setBuying(false);
         })
-      setBuying(false);
+        .on("transactionHash", (txHash) => {
+            toast({
+                title: "Transaction sent",
+                description: txHash,
+                status: "info",
+                isClosable: true,
+            });
+        })
+        .on("receipt", () => {
+            toast({
+                title: "Transaction confirmed",
+                description: `Congratulations! You have bought this doggie!`,
+                status: "success",
+                isClosable: true,
+            });
+            
+        });
+        
+        marketplace.events
+        .MarketTransaction()
+          .on('data', function(event){
+            update();
+            updateOffer();
+          })
+          .on("error", (error) => {
+              toast({
+                  title: "Market Transaction failed",
+                  description: error.message,
+                  status: "error",
+                  isClosable: true,
+              })
+          })
+        setBuying(false);
+      } else {
+        toast({
+            title: "Doggie cannot be bought",
+            description: "This doggie cannot be bought. Reason: owner != seller.",
+            status: "error",
+            isClosable: true,
+        });
+        setBuying(false);
+      }
+      
     }
 
   if (!active) return <RequestAccess />;
