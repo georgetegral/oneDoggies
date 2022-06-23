@@ -1,6 +1,6 @@
 const DoggieMarketplaceInterface = {
     address: {
-        1337: '0x268B78eC4C51Cc3bC6aAD587D7AE0E228B775f8d'
+        1337: '0xCB17693F1e21670ad9B23f69a787ACDe67C0c1b7'
     },
     abi: [
       {
