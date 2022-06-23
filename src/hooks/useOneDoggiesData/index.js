@@ -237,9 +237,9 @@ const useGetRemainingDoggies = () => {
     const update = useCallback(async () => {
         if(oneDoggies != null){
             setLoading(true);
-            const totalSupply = await oneDoggies.methods.totalSupply().call();
+            const gen0Counter = await oneDoggies.methods.gen0Counter().call();
             const maxSupply = await oneDoggies.methods.CREATION_LIMIT_GEN0().call();
-            setRemaining(maxSupply - totalSupply);
+            setRemaining(maxSupply - gen0Counter);
             setLoading(false);
         }
     }, [oneDoggies]);
