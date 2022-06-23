@@ -1,6 +1,6 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0x66F215dB3E23739dbe9B75D2e9e03C488c70FD82'
+        1337: '0x75B318Cd56efCB90cD6fB751cC7c609846e65164'
     },
     abi: [
       {
@@ -185,6 +185,48 @@ const RandomAvatarsInterface = {
         "constant": true
       },
       {
+        "inputs": [],
+        "name": "breedCost",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [],
+        "name": "breedCostFactor",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [],
+        "name": "breedLimit",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
         "inputs": [
           {
             "internalType": "uint256",
@@ -240,6 +282,34 @@ const RandomAvatarsInterface = {
       },
       {
         "inputs": [],
+        "name": "marketplaceCommission",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [],
+        "name": "mintCost",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [],
         "name": "name",
         "outputs": [
           {
@@ -260,6 +330,20 @@ const RandomAvatarsInterface = {
             "internalType": "address",
             "name": "",
             "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [],
+        "name": "renameCost",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -296,6 +380,84 @@ const RandomAvatarsInterface = {
           }
         ],
         "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateMintCost",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateBreedLimit",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateBreedCostFactor",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateBreedCost",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateRenameCost",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateMarketplaceCommission",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -570,8 +732,9 @@ const RandomAvatarsInterface = {
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "stateMutability": "payable",
+        "type": "function",
+        "payable": true
       },
       {
         "inputs": [

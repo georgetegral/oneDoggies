@@ -255,4 +255,40 @@ const useGetRemainingDoggies = () => {
     };
 }
 
-export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies };
+const useGetPrices = () => {
+    const [ mintCost, setMintCost ] = useState(0);
+    const [ breedLimit, setBreedLimit ] = useState(0);
+    const [ breedCostFactor, setBreedCostFactor ] = useState(0);
+    const [ breedCost, setBreedCost ] = useState(0);
+    const [ renameCost, setRenameCost ] = useState(0);
+    const [ marketplaceCommission, setMarketplaceCommission ] = useState(0);
+    const [ loading, setLoading ] = useState(true);
+    const oneDoggies = useOneDoggies();
+
+    const update = useCallback(async () => {
+        if(oneDoggies != null){
+            setLoading(true);
+            setMintCost(await oneDoggies.methods.mintCost().call());
+            var tmpPrice = await oneDoggies.methods.breedLimit().call();
+            setLoading(false);
+        }
+    }, [oneDoggies]);
+
+    useEffect(() => {
+        update();
+    }, [update]);
+
+    return {
+        loading,
+        mintCost,
+        breedLimit,
+        breedCostFactor,
+        breedCost,
+        renameCost,
+        marketplaceCommission,
+        update
+    };
+
+}
+
+export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies, useGetPrices };

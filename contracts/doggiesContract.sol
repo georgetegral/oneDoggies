@@ -20,6 +20,14 @@ contract DoggiesContract is IERC721, Ownable {
     bytes4 private constant _INTERFACE_ID_ERC721 = 0x80ac58cd;
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
 
+    //Costs
+    uint256 public mintCost = 1 ether; //Prod: 200 ONE
+    uint256 public breedLimit = 5;
+    uint256 public breedCostFactor = 2; //Each generation, the breed becomes 2x more expensive
+    uint256 public breedCost = 0.25 ether; //Prod: 50 ONE starting from Gen 0, 100 Gen 1
+    uint256 public renameCost = .025 ether; //Prod: 5 ONE
+    uint256 public marketplaceCommission = 3; //3%
+
     event Birth(
         address owner, 
         uint256 doggieId, 
@@ -47,6 +55,7 @@ contract DoggiesContract is IERC721, Ownable {
     Doggie[] doggies;
     mapping(uint256 => address) public doggieIndexToOwner;
     mapping(address => uint256) ownershipTokenCount;
+    mapping(uint256 => uint256) timesDoggieBreeded; //Checks how many times a doggie has breeded
 
     mapping(uint256 => address) public doggieIndexToApproved;
     //MYADDR => OPERATORADDR => TRUE/FALSE
@@ -57,6 +66,30 @@ contract DoggiesContract is IERC721, Ownable {
 
     constructor(){
         _createDoggie(0,0,0,0, address(0), "Null"); //Added so that no doggie has id of zero
+    }
+
+    function updateMintCost(uint256 _newAmmount) public onlyOwner{
+        mintCost = _newAmmount; //In wei
+    }
+
+    function updateBreedLimit(uint256 _newAmmount) public onlyOwner{
+        breedLimit = _newAmmount; 
+    }
+
+    function updateBreedCostFactor(uint256 _newAmmount) public onlyOwner{
+        breedCostFactor = _newAmmount; 
+    }
+
+    function updateBreedCost(uint256 _newAmmount) public onlyOwner{
+        breedCost = _newAmmount; //In wei
+    }
+
+    function updateRenameCost(uint256 _newAmmount) public onlyOwner{
+        renameCost = _newAmmount; //In wei
+    }
+
+    function updateMarketplaceCommission(uint256 _newAmmount) public onlyOwner{
+        marketplaceCommission = _newAmmount;
     }
 
     function breed( uint256 _dadId, uint256 _momId, string memory _doggieName) public returns (uint256) {
@@ -157,11 +190,19 @@ contract DoggiesContract is IERC721, Ownable {
         
     }
 
-    function createDoggieGen0(uint256 _dna, string memory _doggieName) public onlyOwner returns (uint256) {
-        require(gen0Counter < CREATION_LIMIT_GEN0);
-        gen0Counter++;
-        //Gen 0 have no owners, they are owned by the contract
-        return _createDoggie(0,0,0,_dna, msg.sender, _doggieName);
+    function createDoggieGen0(uint256 _dna, string memory _doggieName) public payable returns (uint256) {
+        require(msg.value == mintCost, "Price to mint doggie is not enough");
+        //Send value to owner
+        (bool success, ) = owner().call{value: msg.value}('');
+        if (success) {
+            require(gen0Counter < CREATION_LIMIT_GEN0);
+            gen0Counter++;
+            //Gen 0 have no owners, they are owned by the contract
+            return _createDoggie(0,0,0,_dna, msg.sender, _doggieName);
+        }
+        else {
+            revert();
+        }
     }
 
     function _createDoggie(uint256 _momId, uint256 _dadId, uint256 _generation, uint256 _dna, address _owner, string memory _doggieName) private returns (uint256) {

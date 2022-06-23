@@ -19,11 +19,14 @@ import {
     ModalBody,
     ModalCloseButton,
     useDisclosure,
-    Input
+    Input,
+    Flex,
+    Spacer
   } from "@chakra-ui/react";
+  import Loading from "../../components/loading";
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
-  import { useGetRemainingDoggies } from "../../hooks/useOneDoggiesData";
+  import { useGetRemainingDoggies, useGetPrices } from "../../hooks/useOneDoggiesData";
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import dogNames from "dog-names";
@@ -32,9 +35,9 @@ import {
   
   const Mint = () => {
     const oneDoggies = useOneDoggies(); //Import from the library.eth.Contract method
-    const { account, active } = useWeb3React();
+    const { account, active, library } = useWeb3React();
     const toast = useToast();
-    const { remaining, update } = useGetRemainingDoggies();
+    const { loading: loadingGetRemainingDoggies, remaining, update } = useGetRemainingDoggies();
 
     //Modal variables
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -59,6 +62,9 @@ import {
     const [dotsColor, setDotsColor] = useState(23);
     const [animationType, setAnimationType] = useState(1);
     const [secret, setSecret] = useState(Math.floor(Math.random() * 9) + 1);
+
+    //Prices
+    const {loading: loadingGetPrices, mintCost} = useGetPrices();
 
     const sliderMinValue = 10;
     const sliderMaxValue = 99;
@@ -103,8 +109,8 @@ import {
       oneDoggies.methods
       .createDoggieGen0(dna,name)
       .send({
-          from: account
-          //value: 1e15
+          from: account,
+          value: mintCost
       })
       .on("transactionHash", (txHash) => {
           toast({
@@ -157,6 +163,7 @@ import {
   }
 
   if (!active) return <RequestAccess />;
+  if( loadingGetRemainingDoggies && loadingGetPrices ) return <Loading />
 
     return (
     <Stack direction="column">
@@ -182,7 +189,7 @@ import {
         </Text>
       </Heading>
       <Text>Hurry! There are only {remaining} Gen0 doggies left!</Text>
-
+      
      <Center borderWidth="2px">
         <Stack p="3" >
           <Box>
@@ -385,6 +392,14 @@ import {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Flex minWidth='max-content' alignItems='center' gap='2'>
+      <Spacer />
+      { loadingGetPrices ? (
+        <Text>Loading price</Text>
+      ) : (
+        <Text fontWeight={600} placement='left'>Current mint price: {library.utils.fromWei(mintCost)} ONE.</Text>
+      ) }
+      </Flex>
     </Stack>
     );
   };
