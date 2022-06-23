@@ -76,6 +76,11 @@ const Doggie = () =>{
       setSuggestedName(dogNames.allRandom());
     }
 
+    const convertDate = (date) => {
+      var newDate = new Date(date * 1000);
+      return newDate.toLocaleString();
+    }
+
     const transfer = () => {
         setTransfering(true);
         const isAddress = library.utils.isAddress(transferAddress);
@@ -473,7 +478,7 @@ const Doggie = () =>{
         <Text fontWeight={600}>
           Birth time:
           <Tag ml={2} colorScheme="green">
-            {doggie.birthTime}
+            {convertDate(doggie.birthTime)}
           </Tag>
         </Text>
         <Text fontWeight={600}>
