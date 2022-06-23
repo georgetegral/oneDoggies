@@ -86,7 +86,7 @@ const Doggie = () =>{
         const isAddress = library.utils.isAddress(transferAddress);
         if(!isAddress) {
             toast({
-                title: "Invalid address.",
+                title: "Invalid address",
                 description: "This address is not an Ethereum address.",
                 status: "error",
                 isClosable: true,
@@ -94,13 +94,21 @@ const Doggie = () =>{
             setTransfering(false);
         } else if(transferAddress === doggie.owner){
             toast({
-                title: "Invalid address.",
+                title: "Transfer to same owner",
                 description: "You can't transfer the Doggie to yourself! Silly.",
                 status: "error",
                 isClosable: true,
             });
             setTransfering(false);
-        }else {
+        } else if (offer.active){
+            toast({
+              title: "Active offer before transfer",
+              description: "Please remove the active offer before transfering the Doggie.",
+              status: "error",
+              isClosable: true,
+            });
+          setTransfering(false);
+        } else {
             oneDoggies.methods.safeTransferFrom(doggie.owner, transferAddress, doggie.tokenId).send({
                 from: account
             })
@@ -114,7 +122,7 @@ const Doggie = () =>{
             })
             .on("transactionHash", (txHash) => {
                 toast({
-                    title: "Transaction sent.",
+                    title: "Transaction sent",
                     description: txHash,
                     status: "info",
                     isClosable: true,
@@ -122,7 +130,7 @@ const Doggie = () =>{
             })
             .on("receipt", () => {
                 toast({
-                    title: "Transaction confirmed.",
+                    title: "Transaction confirmed",
                     description: `This Doggie now belongs to ${transferAddress}`,
                     status: "success",
                     isClosable: true,
@@ -138,7 +146,7 @@ const Doggie = () =>{
         setRenaming(true);
         if(!rename) {
             toast({
-                title: "Empty name.",
+                title: "Empty name",
                 description: "Your doggie's new name cannot be empty!",
                 status: "error",
                 isClosable: true,
@@ -159,7 +167,7 @@ const Doggie = () =>{
             })
             .on("transactionHash", (txHash) => {
                 toast({
-                    title: "Transaction sent.",
+                    title: "Transaction sent",
                     description: txHash,
                     status: "info",
                     isClosable: true,
@@ -167,7 +175,7 @@ const Doggie = () =>{
             })
             .on("receipt", () => {
                 toast({
-                    title: "Transaction confirmed.",
+                    title: "Transaction confirmed",
                     description: `This Doggie's new name is ${rename}!`,
                     status: "success",
                     isClosable: true,
@@ -183,7 +191,7 @@ const Doggie = () =>{
       setSelling(true);
       if(!price){
         toast({
-            title: "Empty price.",
+            title: "Empty price",
             description: "Your selling price cannot be empty!",
             status: "error",
             isClosable: true,
@@ -191,7 +199,7 @@ const Doggie = () =>{
         setSelling(false);
       } else if (price <= 0) {
         toast({
-          title: "Empty price.",
+          title: "Zero price",
           description: "Your selling price cannot be zero or less!",
           status: "error",
           isClosable: true,
@@ -199,7 +207,7 @@ const Doggie = () =>{
         setSelling(false);
       } else if (price <= .01){
         toast({
-          title: "Price too low.",
+          title: "Price too low",
           description: "Your selling price cannot be less than .01 ONE!",
           status: "error",
           isClosable: true,
@@ -223,7 +231,7 @@ const Doggie = () =>{
         })
         .on("transactionHash", (txHash) => {
             toast({
-                title: "Transaction sent.",
+                title: "Transaction sent",
                 description: txHash,
                 status: "info",
                 isClosable: true,
@@ -231,7 +239,7 @@ const Doggie = () =>{
         })
         .on("receipt", () => {
             toast({
-                title: "Transaction confirmed.",
+                title: "Transaction confirmed",
                 description: `This Doggie's has been put in the marketplace for ${price} ONE!`,
                 status: "success",
                 isClosable: true,
@@ -275,7 +283,7 @@ const Doggie = () =>{
       })
       .on("transactionHash", (txHash) => {
           toast({
-              title: "Transaction sent.",
+              title: "Transaction sent",
               description: txHash,
               status: "info",
               isClosable: true,
@@ -283,7 +291,7 @@ const Doggie = () =>{
       })
       .on("receipt", () => {
           toast({
-              title: "Transaction confirmed.",
+              title: "Transaction confirmed",
               description: `This Doggie's has been removed from the marketplace!`,
               status: "success",
               isClosable: true,
@@ -329,7 +337,7 @@ const Doggie = () =>{
       })
       .on("transactionHash", (txHash) => {
           toast({
-              title: "Transaction sent.",
+              title: "Transaction sent",
               description: txHash,
               status: "info",
               isClosable: true,
@@ -337,7 +345,7 @@ const Doggie = () =>{
       })
       .on("receipt", () => {
           toast({
-              title: "Transaction confirmed.",
+              title: "Transaction confirmed",
               description: `Congratulations! You have bought this doggie!`,
               status: "success",
               isClosable: true,

@@ -175,7 +175,7 @@ const Breed = () => {
         setBreeding(true);
         if(!checkIds()){
             toast({
-                title: "Invalid selection.",
+                title: "Invalid selection",
                 description: "You can't breed a doggie with itself!",
                 status: "error",
                 isClosable: true,
@@ -195,7 +195,7 @@ const Breed = () => {
             })
             .on("transactionHash", (txHash) => {
                 toast({
-                    title: "Transaction sent.",
+                    title: "Transaction sent",
                     description: txHash,
                     status: "info",
                     isClosable: true,
@@ -203,7 +203,7 @@ const Breed = () => {
             })
             .on("receipt", () => {
                 toast({
-                    title: "Transaction confirmed.",
+                    title: "Transaction confirmed",
                     description: `Doggies breeded correctly! Hooray!`,
                     status: "success",
                     isClosable: true,

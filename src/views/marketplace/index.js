@@ -48,7 +48,7 @@ const Marketplace = () => {
             })
             .on("transactionHash", (txHash) => {
                 toast({
-                    title: "Transaction sent.",
+                    title: "Transaction sent",
                     description: txHash,
                     status: "info",
                     isClosable: true,
@@ -56,7 +56,7 @@ const Marketplace = () => {
             })
             .on("receipt", () => {
                 toast({
-                    title: "Transaction confirmed.",
+                    title: "Transaction confirmed",
                     description: `Marketplace approved! You are ready to trade doggies!`,
                     status: "success",
                     isClosable: true,
