@@ -1,6 +1,6 @@
-const RandomAvatarsInterface = {
+const OneDoggiesInterface = {
     address: {
-        1337: '0x1dB130758e79530118036904c82bc24f71eDBEeb'
+        1337: '0xfbfFDb5ec172AF868585D4308E5e1f0055a83f07'
     },
     abi: [
       {
@@ -282,20 +282,6 @@ const RandomAvatarsInterface = {
       },
       {
         "inputs": [],
-        "name": "marketplaceCommission",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true
-      },
-      {
-        "inputs": [],
         "name": "mintCost",
         "outputs": [
           {
@@ -445,19 +431,6 @@ const RandomAvatarsInterface = {
           }
         ],
         "name": "updateRenameCost",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "_newAmmount",
-            "type": "uint256"
-          }
-        ],
-        "name": "updateMarketplaceCommission",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -941,4 +914,4 @@ const RandomAvatarsInterface = {
 
 }
 
-export default RandomAvatarsInterface;
+export default OneDoggiesInterface;

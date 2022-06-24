@@ -18,6 +18,8 @@ contract DoggieMarketplace is Ownable {
 
     Offer[] offers;
 
+    uint256 public marketplaceCommission = 2; //2%
+
     event MarketTransaction(string TxType, address owner, uint256 tokenId);
 
     mapping(uint256 => Offer) tokenIdToOffer;
@@ -28,6 +30,10 @@ contract DoggieMarketplace is Ownable {
 
     constructor(address _DoggiesContractAddress) {
         setDoggiesContract(_DoggiesContractAddress);
+    }
+
+    function updateMarketplaceCommission(uint256 _newAmmount) public onlyOwner{
+        marketplaceCommission = _newAmmount;
     }
 
     function getOffer(uint256 _tokenId) public view returns (
@@ -106,20 +112,34 @@ contract DoggieMarketplace is Ownable {
         Offer memory offer = tokenIdToOffer[_tokenId];
         require (msg.value == offer.price, "The price is incorrect");
         require(tokenIdToOffer[_tokenId].active == true, "No active order present");
+        uint256 _commission = msg.value * marketplaceCommission /100;
+        uint256 _remainder = msg.value - _commission;
 
-        //Important: delete the doggie from the mapping before paying out to prevent reentrancy attack
-        delete tokenIdToOffer[_tokenId];
-        offers[offer.index].active = false;
+         //Send value to owner
+        (bool success, ) = owner().call{value: _commission}('');
+        if (success) {
+            //Important: delete the doggie from the mapping before paying out to prevent reentrancy attack
+            delete tokenIdToOffer[_tokenId];
+            offers[offer.index].active = false;
 
-        //Transfer the funds to the seller
-        //TODO: Make this logic pull instead of push
-        if(offer.price > 0){
-            offer.seller.transfer(offer.price);
+            //Transfer the funds to the seller
+            if(offer.price > 0){
+                (bool successSeller, ) = offer.seller.call{value: _remainder}('');
+                if (successSeller){
+                    //transfer ownership of the doggie
+                    _DoggiesContract.transferFrom(offer.seller, msg.sender, _tokenId);
+                    emit MarketTransaction("Buy", msg.sender, _tokenId);
+                }
+                else {
+                    revert();
+                }
+            }
+
         }
-
-        //transfer ownership of the doggie
-        _DoggiesContract.transferFrom(offer.seller, msg.sender, _tokenId);
-        emit MarketTransaction("Buy", msg.sender, _tokenId);
+        else {
+            revert();
+        }
+        
     }
 
 }

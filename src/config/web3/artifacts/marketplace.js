@@ -1,6 +1,6 @@
 const DoggieMarketplaceInterface = {
     address: {
-        1337: '0xF141B4B558d9AB7E2cCe2E368249DB881De4066c'
+        1337: '0x0d092008341F16cb1026977d2c7a08b0e498de80'
     },
     abi: [
       {
@@ -60,6 +60,20 @@ const DoggieMarketplaceInterface = {
       },
       {
         "inputs": [],
+        "name": "marketplaceCommission",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [],
         "name": "owner",
         "outputs": [
           {
@@ -101,6 +115,19 @@ const DoggieMarketplaceInterface = {
           }
         ],
         "name": "setDoggiesContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_newAmmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateMarketplaceCommission",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
