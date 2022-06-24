@@ -29,7 +29,7 @@ import {
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import DoggieCard from "../../components/doggie-card";
-  import { useOneDoggieData, useGetOffer } from "../../hooks/useOneDoggiesData";
+  import { useOneDoggieData, useGetOffer, useGetPrices } from "../../hooks/useOneDoggiesData";
   import { useParams } from "react-router-dom";
   import Loading from "../../components/loading";
   import { useState } from "react";
@@ -42,6 +42,8 @@ const Doggie = () =>{
     const { tokenId } = useParams();
     const { loading, doggie, update } = useOneDoggieData(tokenId);
     const { loading: loadingOffer, offer, update: updateOffer } = useGetOffer(tokenId);
+    //Prices
+    const {loading: loadingGetPrices, renameCost} = useGetPrices();
     const toast = useToast();
     const oneDoggies = useOneDoggies();
     const marketplace = useMarketplace();
@@ -155,7 +157,8 @@ const Doggie = () =>{
         }
         else {
             oneDoggies.methods.updateName(tokenId, rename).send({
-                from: account
+                from: account,
+                value: renameCost
             })
             .on("error", (error) => {
                 toast({
@@ -505,6 +508,12 @@ const Doggie = () =>{
           </Tag>
         </Text>
         <Text fontWeight={600}>
+          Times Breeded:
+          <Tag ml={2} colorScheme="green">
+            {doggie.timesBreeded}
+          </Tag>
+        </Text>
+        <Text fontWeight={600}>
           Owner:
           <Tag ml={2} colorScheme="green">
             {doggie.owner}
@@ -577,6 +586,11 @@ const Doggie = () =>{
                 value={rename}
                 onChange={handleRenameChange}
             />
+            { loadingGetPrices ? (
+              <Text>Loading price</Text>
+            ) : (
+              <Text fontWeight={600}>Current rename price: {library.utils.fromWei(renameCost)} ONE.</Text>
+            ) }
           </ModalBody>
 
           <ModalFooter>

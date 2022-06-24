@@ -18,21 +18,21 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    useDisclosure,
+    useDisclosure
   } from "@chakra-ui/react";
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
-  import { useOneDoggiesData } from "../../hooks/useOneDoggiesData";
+  import { useOneDoggiesData, useGetBreedData, useGetTimesBreeded } from "../../hooks/useOneDoggiesData";
   import { useState } from "react";
   import dogNames from "dog-names";
 
 const Breed = () => {
-    const { active, account } = useWeb3React();
+    const { active, account, library } = useWeb3React();
     const toast = useToast();
     const oneDoggies = useOneDoggies();
-    const { doggies, loading } = useOneDoggiesData({
+    const { loading, doggies, update } = useOneDoggiesData({
         owner: account
       });
     const [ breeding, setBreeding ] = useState(false);
@@ -42,7 +42,7 @@ const Breed = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     //Dad variables
-    const [dadId, setDadId] = useState("");
+    const [dadId, setDadId] = useState();
     const [hasSelectedDad, setHasSelectedDad] = useState(false);
     const [primaryColorDad, setPrimaryColorDad] = useState(0);
     const [secondaryColorDad, setSecondaryColorDad] = useState(0);
@@ -59,9 +59,10 @@ const Breed = () => {
     const [momIdDad, setMomIdDad] = useState(0);
     const [dadIdDad, setDadIdDad] = useState(0);
     const [birthTimeDad, setBirthTimeDad] = useState(0);
+    const [timesBreededDad, setTimesBreededDad] = useState(0);
 
     //Mom variables
-    const [momId, setMomId] = useState("");
+    const [momId, setMomId] = useState();
     const [hasSelectedMom, setHasSelectedMom] = useState(false);
     const [primaryColorMom, setPrimaryColorMom] = useState(0);
     const [secondaryColorMom, setSecondaryColorMom] = useState(0);
@@ -78,6 +79,10 @@ const Breed = () => {
     const [momIdMom, setMomIdMom] = useState(0);
     const [dadIdMom, setDadIdMom] = useState(0);
     const [birthTimeMom, setBirthTimeMom] = useState(0);
+    const [timesBreededMom, setTimesBreededMom] = useState(0);
+
+    //Breed prices and data
+    const { loading: loadingGetBreedCost, breedCost,  update: updateGetBreedCost } = useGetBreedData();
 
     //Breeded Modal variables
     const [ doggieId, setDoggieId ] = useState(0);
@@ -133,11 +138,13 @@ const Breed = () => {
             setMomIdDad(doggies[idx].momId);
             setDadIdDad(doggies[idx].dadId);
             setBirthTimeDad(doggies[idx].birthTime);
+            setTimesBreededDad(doggies[idx].timesBreeded);
         }
         else{
             setDadId("");
             setHasSelectedDad(false);
         }
+        updateGetBreedCost(tokenId, momId);
     }
 
     const updateMom = (tokenId) => {
@@ -161,15 +168,18 @@ const Breed = () => {
             setMomIdMom(doggies[idx].momId);
             setDadIdMom(doggies[idx].dadId);
             setBirthTimeMom(doggies[idx].birthTime);
+            setTimesBreededMom(doggies[idx].timesBreeded);
         }
         else{
             setMomId("");
             setHasSelectedMom(false);
         }
+        updateGetBreedCost(dadId, tokenId);
     }
 
     const breed = () => {
         setBreeding(true);
+
         if(!checkIds()){
             toast({
                 title: "Invalid selection",
@@ -178,9 +188,18 @@ const Breed = () => {
                 isClosable: true,
             });
             setBreeding(false);
+        } else if (timesBreededMom >= 5 || timesBreededDad >= 5){
+            toast({
+                title: "Breeded too many times",
+                description: "You can't breed a doggie more than 5 times!",
+                status: "error",
+                isClosable: true,
+            });
+            setBreeding(false);
         } else {
             oneDoggies.methods.breed(dadId, momId, newName).send({
-                from: account
+                from: account,
+                value: breedCost
             })
             .on("error", (error) => {
                 toast({
@@ -217,6 +236,7 @@ const Breed = () => {
                 setDoggieOwner(event.returnValues.owner);
                 setMintedName(event.returnValues.doggieName);
                 onOpen();
+                update();
 
             })
             .on("error", (error) => {
@@ -227,8 +247,9 @@ const Breed = () => {
                     isClosable: true,
                 })
             })
-
+            
             setBreeding(false);
+            
         }
     }
 
@@ -275,14 +296,14 @@ const Breed = () => {
             <Center>
                 <Select placeholder='Select the sire' width="50%" name="dadId" value={dadId} onChange={(e) => updateDad(e.target.value)}>
                     {doggies.map(({tokenId, doggieName, generation}) =>(
-                        <option value={tokenId} key={tokenId}>ID: #{tokenId} name: {doggieName} Gen: {generation}</option>
+                        <option value={tokenId} key={tokenId}>ID: #{tokenId} Name: {doggieName} Gen: {generation}</option>
                     ))}
                 </Select>
             </Center>
             <Center>
                 <Select placeholder='Select the dame' width="50%" name="momId" value={momId} onChange={(e) => updateMom(e.target.value)}>
                     {doggies.map(({tokenId, doggieName, generation}) =>(
-                        <option value={tokenId} key={tokenId}>ID: #{tokenId} name: {doggieName} Gen: {generation}</option>
+                        <option value={tokenId} key={tokenId}>ID: #{tokenId} Name: {doggieName} Gen: {generation}</option>
                     ))}
                 </Select>
             </Center>
@@ -343,6 +364,12 @@ const Breed = () => {
                             DNA:
                             <Tag ml={2} colorScheme="green">
                                 {dnaDad}
+                            </Tag>
+                        </Text>
+                        <Text fontWeight={600}>
+                            Times Breeded:
+                            <Tag ml={2} colorScheme="green">
+                                {timesBreededDad}
                             </Tag>
                         </Text>
                         </Stack>
@@ -409,6 +436,12 @@ const Breed = () => {
                                     {dnaMom}
                                 </Tag>
                             </Text>
+                            <Text fontWeight={600}>
+                            Times Breeded:
+                            <Tag ml={2} colorScheme="green">
+                                {timesBreededMom}
+                            </Tag>
+                        </Text>
                             </Stack>
                         </Stack>
                     ) : (
@@ -435,6 +468,13 @@ const Breed = () => {
                             <Button colorScheme='teal' size="md" width="85%" justifyContent="flex-start" onClick={() => randomSuggestion()}>Random Suggestion</Button>
                         </ButtonGroup>
                         <Text spacing={10}></Text>
+                        <Center>
+                            { loadingGetBreedCost ? (
+                                <Text>Loading price...</Text>
+                            ) : (
+                                <Text fontWeight={600} placement='left'>Breed price: {library.utils.fromWei(breedCost)} ONE.</Text>
+                            ) }
+                        </Center>
                         <Center>
                             <Button colorScheme='green' size="md" width="70%" justifyContent="center" onClick={() => breed()}>Breed! 🐶❤️🐶</Button>
                         </Center>

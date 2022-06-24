@@ -23,6 +23,7 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
     const dadId = doggieData.dadId;
     const generation = doggieData.generation;
     const doggieName = doggieData.doggieName;
+    const timesBreeded = doggieData.timesBreeded;
 
     return {
         tokenId,
@@ -32,6 +33,7 @@ const getDoggieData = async ({ oneDoggies, tokenId }) => {
         dadId,
         generation,
         doggieName,
+        timesBreeded,
         owner,
         ...metadata
     }
@@ -269,7 +271,11 @@ const useGetPrices = () => {
         if(oneDoggies != null){
             setLoading(true);
             setMintCost(await oneDoggies.methods.mintCost().call());
-            var tmpPrice = await oneDoggies.methods.breedLimit().call();
+            setBreedLimit(await oneDoggies.methods.breedLimit().call());
+            setBreedCostFactor(await oneDoggies.methods.breedCostFactor().call());
+            setBreedCost(await oneDoggies.methods.breedCost().call());
+            setRenameCost(await oneDoggies.methods.renameCost().call());
+            setMarketplaceCommission(await oneDoggies.methods.marketplaceCommission().call());
             setLoading(false);
         }
     }, [oneDoggies]);
@@ -291,4 +297,29 @@ const useGetPrices = () => {
 
 }
 
-export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies, useGetPrices };
+const useGetBreedData = () => {
+    const [ breedCost, setBreedCost ] = useState(0);
+    const [ loading, setLoading ] = useState(true);
+    const oneDoggies = useOneDoggies();
+
+    const update = useCallback(async (dadId, momId) => {
+        if(oneDoggies && dadId && momId != null){
+            setLoading(true);
+            setBreedCost(await oneDoggies.methods.getBreedCost(dadId, momId).call());
+            setLoading(false);
+        }
+    }, [oneDoggies]);
+
+    useEffect(() => {
+        update();
+    }, [update]);
+
+    return {
+        loading,
+        breedCost,
+        update
+    };
+
+}
+
+export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies, useGetPrices, useGetBreedData };

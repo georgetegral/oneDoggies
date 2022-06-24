@@ -1,6 +1,6 @@
 const RandomAvatarsInterface = {
     address: {
-        1337: '0x75B318Cd56efCB90cD6fB751cC7c609846e65164'
+        1337: '0x1dB130758e79530118036904c82bc24f71eDBEeb'
     },
     abi: [
       {
@@ -473,6 +473,31 @@ const RandomAvatarsInterface = {
             "internalType": "uint256",
             "name": "_momId",
             "type": "uint256"
+          }
+        ],
+        "name": "getBreedCost",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_dadId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_momId",
+            "type": "uint256"
           },
           {
             "internalType": "string",
@@ -488,8 +513,9 @@ const RandomAvatarsInterface = {
             "type": "uint256"
           }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "stateMutability": "payable",
+        "type": "function",
+        "payable": true
       },
       {
         "inputs": [
@@ -705,6 +731,11 @@ const RandomAvatarsInterface = {
             "internalType": "string",
             "name": "doggieName",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timesBreeded",
+            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -843,8 +874,9 @@ const RandomAvatarsInterface = {
         ],
         "name": "updateName",
         "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "stateMutability": "payable",
+        "type": "function",
+        "payable": true
       },
       {
         "inputs": [

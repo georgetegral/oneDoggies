@@ -50,12 +50,12 @@ contract DoggiesContract is IERC721, Ownable {
         uint32 dadId;
         uint16 generation;
         string doggieName;
+        uint256 timesBreeded;
     }
 
     Doggie[] doggies;
     mapping(uint256 => address) public doggieIndexToOwner;
     mapping(address => uint256) ownershipTokenCount;
-    mapping(uint256 => uint256) timesDoggieBreeded; //Checks how many times a doggie has breeded
 
     mapping(uint256 => address) public doggieIndexToApproved;
     //MYADDR => OPERATORADDR => TRUE/FALSE
@@ -92,31 +92,76 @@ contract DoggiesContract is IERC721, Ownable {
         marketplaceCommission = _newAmmount;
     }
 
-    function breed( uint256 _dadId, uint256 _momId, string memory _doggieName) public returns (uint256) {
+    function getBreedCost( uint256 _dadId, uint256 _momId) public view returns(uint256) {
+        //Get the DNA of the parents
+        (,,,,uint256 _dadGeneration,,) = getDoggie(_dadId);
+        (,,,,uint256 _momGeneration,,) = getDoggie(_momId);
+        uint256 _currentGeneration;
+        if (_dadGeneration >= _momGeneration) {
+            _currentGeneration = _dadGeneration;
+        } else {
+            _currentGeneration = _momGeneration;
+        }
+        return breedCost * (breedCostFactor ** _currentGeneration);
+    }
+
+    function canBreed( uint256 _tokenId ) internal view returns (bool){
+        (,,,,,,uint256 timesBreeded) = getDoggie(_tokenId);
+        if(timesBreeded < breedLimit){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function breed( uint256 _dadId, uint256 _momId, string memory _doggieName) public payable returns (uint256) {
         //Check ownership
         require(_owns(msg.sender, _dadId), "The user doesn't own the token.");
         require(_owns(msg.sender, _momId), "The user doesn't own the token.");
         require(_dadId != _momId, "The Doggies must be different to breed.");
-        //Get the DNA of the parents
-        (uint256 _dadDna,,,,uint256 _dadGeneration,) = getDoggie(_dadId);
-        (uint256 _momDna,,,,uint256 _momGeneration,) = getDoggie(_momId);
-        //Get the new dna
-        uint256 _newDna = _mixDna(_dadDna, _momDna);
-        //Figure out the generation
-        uint256 _kidGeneration = 0;
-        if(_dadGeneration < _momGeneration){
-            _kidGeneration = _momGeneration + 1;
-            _kidGeneration /=2;
-        }
-        else if (_dadGeneration > _momGeneration){
-            _kidGeneration = _dadGeneration + 1;
-            _kidGeneration /=2;
+        require(canBreed(_dadId), "The Doggie has reached it's limit to breed, it can't breed anymore.");
+        require(canBreed(_momId), "The Doggie has reached it's limit to breed, it can't breed anymore.");
+        require(msg.value == getBreedCost(_dadId, _momId), "Price to breed the doggies is not correct.");
+        //Send value to owner
+        (bool success, ) = owner().call{value: msg.value}('');
+        if (success) {
+            //Get the DNA of the parents
+            (uint256 _dadDna,,,,uint256 _dadGeneration,,) = getDoggie(_dadId);
+            (uint256 _momDna,,,,uint256 _momGeneration,,) = getDoggie(_momId);
+            //Get the new dna
+            uint256 _newDna = _mixDna(_dadDna, _momDna);
+            //Figure out the generation
+            uint256 _kidGeneration = 0;
+            if(_dadGeneration < _momGeneration){
+                _kidGeneration = _momGeneration + 1;
+                _kidGeneration /=2;
+            }
+            else if (_dadGeneration > _momGeneration){
+                _kidGeneration = _dadGeneration + 1;
+                _kidGeneration /=2;
+            }
+            else {
+                _kidGeneration = _momGeneration + 1;
+            }
+            //Add +1 to the parent's breed counter
+            _updateParentsBreedCounter(_dadId, _momId);
+            //Create a new doggie with the new properties, give it to the msg.sender
+            return _createDoggie(_momId, _dadId, _kidGeneration, _newDna, msg.sender, _doggieName);
         }
         else {
-            _kidGeneration = _momGeneration + 1;
+            revert();
         }
-        //Create a new cat with the new properties, give it to the msg.sender
-        return _createDoggie(_momId, _dadId, _kidGeneration, _newDna, msg.sender, _doggieName);
+        
+    }
+
+    function _updateParentsBreedCounter(uint256 _dadId, uint256 _momId) internal {
+        (,,,,,,uint256 _dadTimesBreeded) = getDoggie(_dadId);
+        (,,,,,,uint256 _momTimesBreeded)  = getDoggie(_momId);
+        Doggie storage doggieDad = doggies[_dadId];
+        Doggie storage doggieMom = doggies[_momId];
+        doggieDad.timesBreeded = _dadTimesBreeded + 1;
+        doggieMom.timesBreeded = _momTimesBreeded + 1;
     }
 
     function supportsInterface(bytes4 _interfaceId) external pure returns (bool){
@@ -177,7 +222,8 @@ contract DoggiesContract is IERC721, Ownable {
         uint256 momId,
         uint256 dadId,
         uint256 generation,
-        string memory doggieName
+        string memory doggieName,
+        uint256 timesBreeded
     ){
         Doggie storage doggie = doggies[_id]; //pointer, uses less memory than "memory" as that would copy the value
 
@@ -187,15 +233,15 @@ contract DoggiesContract is IERC721, Ownable {
         dadId = uint256(doggie.dadId);
         generation = uint256(doggie.generation);
         doggieName = doggie.doggieName;
-        
+        timesBreeded = doggie.timesBreeded;
     }
 
     function createDoggieGen0(uint256 _dna, string memory _doggieName) public payable returns (uint256) {
-        require(msg.value == mintCost, "Price to mint doggie is not enough");
+        require(gen0Counter < CREATION_LIMIT_GEN0);
+        require(msg.value == mintCost, "Price to mint the doggie is not correct.");
         //Send value to owner
         (bool success, ) = owner().call{value: msg.value}('');
         if (success) {
-            require(gen0Counter < CREATION_LIMIT_GEN0);
             gen0Counter++;
             //Gen 0 have no owners, they are owned by the contract
             return _createDoggie(0,0,0,_dna, msg.sender, _doggieName);
@@ -212,7 +258,8 @@ contract DoggiesContract is IERC721, Ownable {
             momId: uint32(_momId),
             dadId: uint32(_dadId),
             generation: uint16(_generation),
-            doggieName: _doggieName
+            doggieName: _doggieName,
+            timesBreeded: 0
         });
 
         doggies.push(_doggie);
@@ -258,7 +305,7 @@ contract DoggiesContract is IERC721, Ownable {
 
     function tokenURI(uint256 tokenId) public view returns (string memory){
         require(tokenId < doggies.length, "URI query for nonexistent token."); //Token must exist
-        (uint256 _dna,,,,,) = getDoggie(tokenId);
+        (uint256 _dna,,,,,,) = getDoggie(tokenId);
         (uint256 primaryColor,uint256 secondaryColor,uint256 stomachColor,uint256 backgroundColor,uint256 locketColor,uint256 beltColor,uint256 dotsColor,uint256 animation,) = _divideDna(_dna);
         string memory jsonURI = Base64.encode(
             bytes(
@@ -427,11 +474,19 @@ contract DoggiesContract is IERC721, Ownable {
         secret = _getDnaSection(_dna, 0, 1);
     }
 
-    function updateName(uint256 _tokenId, string memory _newDoggieName) public{
+    function updateName(uint256 _tokenId, string memory _newDoggieName) public payable{
         require(_owns(msg.sender, _tokenId), "Only the owner can change the doggie's name."); //From owns the token
-        Doggie storage doggie = doggies[_tokenId];
-        doggie.doggieName = _newDoggieName; 
-        emit NameChange(msg.sender, _tokenId, _newDoggieName);
+        require(msg.value == renameCost, "Price to rename the doggie is not correct.");
+        //Send value to owner
+        (bool success, ) = owner().call{value: msg.value}('');
+        if (success) {
+            Doggie storage doggie = doggies[_tokenId];
+            doggie.doggieName = _newDoggieName; 
+            emit NameChange(msg.sender, _tokenId, _newDoggieName);
+        }
+        else {
+            revert();
+        }
     }
 
     //ERC721Enumerable
