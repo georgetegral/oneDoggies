@@ -257,6 +257,7 @@ const useGetRemainingDoggies = () => {
     };
 }
 
+//Get prices data
 const useGetPrices = () => {
     const [ mintCost, setMintCost ] = useState(0);
     const [ breedLimit, setBreedLimit ] = useState(0);
@@ -297,6 +298,7 @@ const useGetPrices = () => {
 
 }
 
+//Get Breed data
 const useGetBreedData = () => {
     const [ breedCost, setBreedCost ] = useState(0);
     const [ loading, setLoading ] = useState(true);

@@ -24,7 +24,7 @@ import {
   import RequestAccess from "../../components/request-access";
   import DoggieCard from "../../components/doggie-card";
   import useOneDoggies from "../../hooks/useOneDoggies";
-  import { useOneDoggiesData, useGetBreedData, useGetTimesBreeded } from "../../hooks/useOneDoggiesData";
+  import { useOneDoggiesData, useGetBreedData, useGetPrices } from "../../hooks/useOneDoggiesData";
   import { useState } from "react";
   import dogNames from "dog-names";
 
@@ -32,7 +32,7 @@ const Breed = () => {
     const { active, account, library } = useWeb3React();
     const toast = useToast();
     const oneDoggies = useOneDoggies();
-    const { loading, doggies, update } = useOneDoggiesData({
+    const { doggies } = useOneDoggiesData({
         owner: account
       });
     const [ breeding, setBreeding ] = useState(false);
@@ -60,6 +60,7 @@ const Breed = () => {
     const [dadIdDad, setDadIdDad] = useState(0);
     const [birthTimeDad, setBirthTimeDad] = useState(0);
     const [timesBreededDad, setTimesBreededDad] = useState(0);
+    const [localTimesBreededDad, setLocalTimesBreededDad] = useState(0);
 
     //Mom variables
     const [momId, setMomId] = useState();
@@ -80,9 +81,11 @@ const Breed = () => {
     const [dadIdMom, setDadIdMom] = useState(0);
     const [birthTimeMom, setBirthTimeMom] = useState(0);
     const [timesBreededMom, setTimesBreededMom] = useState(0);
+    const [localTimesBreededMom, setLocalTimesBreededMom] = useState(0);
 
     //Breed prices and data
     const { loading: loadingGetBreedCost, breedCost,  update: updateGetBreedCost } = useGetBreedData();
+    const { breedLimit } = useGetPrices();
 
     //Breeded Modal variables
     const [ doggieId, setDoggieId ] = useState(0);
@@ -139,6 +142,7 @@ const Breed = () => {
             setDadIdDad(doggies[idx].dadId);
             setBirthTimeDad(doggies[idx].birthTime);
             setTimesBreededDad(doggies[idx].timesBreeded);
+            setLocalTimesBreededDad(doggies[idx].timesBreeded);
         }
         else{
             setDadId("");
@@ -169,6 +173,7 @@ const Breed = () => {
             setDadIdMom(doggies[idx].dadId);
             setBirthTimeMom(doggies[idx].birthTime);
             setTimesBreededMom(doggies[idx].timesBreeded);
+            setLocalTimesBreededMom(doggies[idx].timesBreeded);
         }
         else{
             setMomId("");
@@ -188,7 +193,7 @@ const Breed = () => {
                 isClosable: true,
             });
             setBreeding(false);
-        } else if (timesBreededMom >= 5 || timesBreededDad >= 5){
+        } else if (localTimesBreededMom >= breedLimit || localTimesBreededDad >= breedLimit){
             toast({
                 title: "Breeded too many times",
                 description: "You can't breed a doggie more than 5 times!",
@@ -236,7 +241,8 @@ const Breed = () => {
                 setDoggieOwner(event.returnValues.owner);
                 setMintedName(event.returnValues.doggieName);
                 onOpen();
-                update();
+                setLocalTimesBreededMom(parseInt(localTimesBreededMom) +1);
+                setLocalTimesBreededDad(parseInt(localTimesBreededDad) +1);
 
             })
             .on("error", (error) => {
@@ -369,7 +375,7 @@ const Breed = () => {
                         <Text fontWeight={600}>
                             Times Breeded:
                             <Tag ml={2} colorScheme="green">
-                                {timesBreededDad}
+                                {localTimesBreededDad}
                             </Tag>
                         </Text>
                         </Stack>
@@ -439,7 +445,7 @@ const Breed = () => {
                             <Text fontWeight={600}>
                             Times Breeded:
                             <Tag ml={2} colorScheme="green">
-                                {timesBreededMom}
+                                {localTimesBreededMom}
                             </Tag>
                         </Text>
                             </Stack>
@@ -476,7 +482,7 @@ const Breed = () => {
                             ) }
                         </Center>
                         <Center>
-                            <Button colorScheme='green' size="md" width="70%" justifyContent="center" onClick={() => breed()}>Breed! 🐶❤️🐶</Button>
+                            <Button colorScheme='green' size="md" width="70%" justifyContent="center" disabled={breeding} onClick={() => breed()}>Breed! 🐶❤️🐶</Button>
                         </Center>
                         
                     </Stack>
