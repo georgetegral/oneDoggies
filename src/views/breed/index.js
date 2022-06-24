@@ -59,7 +59,7 @@ const Breed = () => {
     const [momIdDad, setMomIdDad] = useState(0);
     const [dadIdDad, setDadIdDad] = useState(0);
     const [birthTimeDad, setBirthTimeDad] = useState(0);
-    const [timesBreededDad, setTimesBreededDad] = useState(0);
+    //const [timesBreededDad, setTimesBreededDad] = useState(0);
     const [localTimesBreededDad, setLocalTimesBreededDad] = useState(0);
 
     //Mom variables
@@ -80,7 +80,7 @@ const Breed = () => {
     const [momIdMom, setMomIdMom] = useState(0);
     const [dadIdMom, setDadIdMom] = useState(0);
     const [birthTimeMom, setBirthTimeMom] = useState(0);
-    const [timesBreededMom, setTimesBreededMom] = useState(0);
+    //const [timesBreededMom, setTimesBreededMom] = useState(0);
     const [localTimesBreededMom, setLocalTimesBreededMom] = useState(0);
 
     //Breed prices and data
@@ -141,7 +141,6 @@ const Breed = () => {
             setMomIdDad(doggies[idx].momId);
             setDadIdDad(doggies[idx].dadId);
             setBirthTimeDad(doggies[idx].birthTime);
-            setTimesBreededDad(doggies[idx].timesBreeded);
             setLocalTimesBreededDad(doggies[idx].timesBreeded);
         }
         else{
@@ -172,7 +171,6 @@ const Breed = () => {
             setMomIdMom(doggies[idx].momId);
             setDadIdMom(doggies[idx].dadId);
             setBirthTimeMom(doggies[idx].birthTime);
-            setTimesBreededMom(doggies[idx].timesBreeded);
             setLocalTimesBreededMom(doggies[idx].timesBreeded);
         }
         else{

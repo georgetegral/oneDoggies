@@ -24,9 +24,9 @@ contract DoggiesContract is IERC721, Ownable {
     uint256 public mintCost = 1 ether; //Prod: 200 ONE
     uint256 public breedLimit = 5;
     uint256 public breedCostFactor = 2; //Each generation, the breed becomes 2x more expensive
-    uint256 public breedCost = 0.25 ether; //Prod: 50 ONE starting from Gen 0, 100 Gen 1
+    uint256 public breedCost = 0.25 ether; //Prod: 50 ONE starting from Gen 0, formula: breedCost * (2**generation)
     uint256 public renameCost = .025 ether; //Prod: 5 ONE
-    uint256 public marketplaceCommission = 3; //3%
+    uint256 public marketplaceCommission = 2; //2%
 
     event Birth(
         address owner, 

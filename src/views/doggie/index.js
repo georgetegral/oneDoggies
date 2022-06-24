@@ -43,7 +43,7 @@ const Doggie = () =>{
     const { loading, doggie, update } = useOneDoggieData(tokenId);
     const { loading: loadingOffer, offer, update: updateOffer } = useGetOffer(tokenId);
     //Prices
-    const {loading: loadingGetPrices, renameCost} = useGetPrices();
+    const {loading: loadingGetPrices, renameCost, marketplaceCommission} = useGetPrices();
     const toast = useToast();
     const oneDoggies = useOneDoggies();
     const marketplace = useMarketplace();
@@ -73,6 +73,10 @@ const Doggie = () =>{
 
     //Buy Variables
     const [ buying, setBuying ] = useState(false);
+
+    function isNumeric(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
+    }
 
     function randomSuggestion(){
       setSuggestedName(dogNames.allRandom());
@@ -192,7 +196,15 @@ const Doggie = () =>{
 
     const sell = () => {
       setSelling(true);
-      if(!price){
+      if(!isNumeric(price)){
+        toast({
+          title: "Invalid price",
+          description: "Please input a valid number",
+          status: "error",
+          isClosable: true,
+        });
+        setSelling(false);
+      } else if(!price){
         toast({
             title: "Empty price",
             description: "Your selling price cannot be empty!",
@@ -381,6 +393,17 @@ const Doggie = () =>{
       }
       
     }
+
+  const getPriceMinusCommission = (price) => {
+    if( isNumeric(price) && price >= 0 &&marketplaceCommission){
+      var commission = price * marketplaceCommission / 100;
+      var finalPrice = price - commission;
+      return Math.round((finalPrice + Number.EPSILON) * 100) / 100;
+    }
+    else {
+      return null;
+    }
+  }
 
   if (!active) return <RequestAccess />;
 
@@ -622,8 +645,16 @@ const Doggie = () =>{
               />
               <InputRightAddon children='ONE' />
             </InputGroup>
+            { loadingGetPrices ? (
+              <Text>Loading marketplace commission</Text>
+            ) : (
+              <Stack>
+                <Text>Marketplace Commission: {marketplaceCommission}%</Text>
+                <Text>You will get about {getPriceMinusCommission(price)} ONE.</Text>
+              </Stack>
+            ) }
             <Text fontWeight='bold' mb='1rem'>
-              Are you sure you want to sell it?
+              Are you sure you want to sell the doggie?
             </Text>
           </ModalBody>
 
