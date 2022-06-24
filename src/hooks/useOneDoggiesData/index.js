@@ -264,7 +264,6 @@ const useGetPrices = () => {
     const [ breedCostFactor, setBreedCostFactor ] = useState(0);
     const [ breedCost, setBreedCost ] = useState(0);
     const [ renameCost, setRenameCost ] = useState(0);
-    const [ marketplaceCommission, setMarketplaceCommission ] = useState(0);
     const [ loading, setLoading ] = useState(true);
     const oneDoggies = useOneDoggies();
 
@@ -276,7 +275,6 @@ const useGetPrices = () => {
             setBreedCostFactor(await oneDoggies.methods.breedCostFactor().call());
             setBreedCost(await oneDoggies.methods.breedCost().call());
             setRenameCost(await oneDoggies.methods.renameCost().call());
-            setMarketplaceCommission(await oneDoggies.methods.marketplaceCommission().call());
             setLoading(false);
         }
     }, [oneDoggies]);
@@ -292,7 +290,6 @@ const useGetPrices = () => {
         breedCostFactor,
         breedCost,
         renameCost,
-        marketplaceCommission,
         update
     };
 
@@ -324,4 +321,30 @@ const useGetBreedData = () => {
 
 }
 
-export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies, useGetPrices, useGetBreedData };
+//Get marketplace commission
+const useGetMarketplaceCommission = () => {
+    const [ marketplaceCommission, setMarketplaceCommission ] = useState(0);
+    const [ loading, setLoading ] = useState(true);
+    const marketplace = useMarketplace();
+
+    const update = useCallback(async () => {
+        if(marketplace != null){
+            setLoading(true);
+            setMarketplaceCommission(await marketplace.methods.marketplaceCommission().call());
+            setLoading(false);
+        }
+    }, [marketplace]);
+
+    useEffect(() => {
+        update();
+    }, [update]);
+
+    return {
+        loading,
+        marketplaceCommission,
+        update
+    };
+
+}
+
+export {useOneDoggiesData, useOneDoggieData, useIsApprovedForAll, useGetAllTokensOnSale, useGetOffer, useGetRemainingDoggies, useGetPrices, useGetBreedData, useGetMarketplaceCommission };

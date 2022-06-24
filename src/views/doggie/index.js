@@ -29,7 +29,7 @@ import {
   import { useWeb3React } from "@web3-react/core";
   import RequestAccess from "../../components/request-access";
   import DoggieCard from "../../components/doggie-card";
-  import { useOneDoggieData, useGetOffer, useGetPrices } from "../../hooks/useOneDoggiesData";
+  import { useOneDoggieData, useGetOffer, useGetPrices, useGetMarketplaceCommission, useIsApprovedForAll } from "../../hooks/useOneDoggiesData";
   import { useParams } from "react-router-dom";
   import Loading from "../../components/loading";
   import { useState } from "react";
@@ -43,7 +43,12 @@ const Doggie = () =>{
     const { loading, doggie, update } = useOneDoggieData(tokenId);
     const { loading: loadingOffer, offer, update: updateOffer } = useGetOffer(tokenId);
     //Prices
-    const {loading: loadingGetPrices, renameCost, marketplaceCommission} = useGetPrices();
+    const {loading: loadingGetPrices, renameCost} = useGetPrices();
+    const {marketplaceCommission} = useGetMarketplaceCommission();
+    //The user needs to have the contract approved to use the marketplace
+    const { approved, update: updateUseIsApprovedForAll } = useIsApprovedForAll({
+      owner: account
+    });
     const toast = useToast();
     const oneDoggies = useOneDoggies();
     const marketplace = useMarketplace();
@@ -405,6 +410,54 @@ const Doggie = () =>{
     }
   }
 
+  const setApprovalForAll = () => {
+    if(oneDoggies && marketplace != null){
+
+        oneDoggies.methods.setApprovalForAll(marketplace._address, true).send({
+            from: account
+        })
+        .on("error", (error) => {
+            toast({
+                title: "Transaction failed",
+                description: error.message,
+                status: "error",
+                isClosable: true,
+            })
+        })
+        .on("transactionHash", (txHash) => {
+            toast({
+                title: "Transaction sent",
+                description: txHash,
+                status: "info",
+                isClosable: true,
+            });
+        })
+        .on("receipt", () => {
+            toast({
+                title: "Transaction confirmed",
+                description: `Marketplace approved! You are ready to trade doggies!`,
+                status: "success",
+                isClosable: true,
+            });
+        });
+
+        oneDoggies.events
+        .ApprovalForAll()
+        .on('data', function(event){
+          updateUseIsApprovedForAll();
+        })
+        .on("error", (error) => {
+            toast({
+                title: "ApprovalForAll failed",
+                description: error.message,
+                status: "error",
+                isClosable: true,
+            })
+        })
+
+    }
+}
+
   if (!active) return <RequestAccess />;
 
   if (loading || loadingOffer) return <Loading />;
@@ -653,15 +706,23 @@ const Doggie = () =>{
                 <Text>You will get about {getPriceMinusCommission(price)} ONE.</Text>
               </Stack>
             ) }
-            <Text fontWeight='bold' mb='1rem'>
-              Are you sure you want to sell the doggie?
-            </Text>
+            {approved ? (
+              <Text fontWeight='bold' mb='1rem'>
+                Are you sure you want to sell the doggie?
+              </Text>
+            ) : (
+              <Text fontWeight='bold' mb='1rem'>
+                Please approve the marketplace before selling.
+              </Text>
+            )}
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='green' mr={3} onClick={sell}>
-              Sell
-            </Button>
+            {approved ? (
+              <Button colorScheme='green' mr={3} onClick={sell}>Sell</Button>
+            ) : (
+              <Button colorScheme='orange' mr={3} onClick={setApprovalForAll} isLoading={loading}>Approve Marketplace</Button>
+            )}
             <Button colorScheme='red' mr={3} onClick={onCloseSell}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
