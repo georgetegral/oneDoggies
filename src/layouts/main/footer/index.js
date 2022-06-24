@@ -27,7 +27,7 @@ const Footer = () => {
           align={{ base: "center", md: "center" }}
         >
           <Text>
-            © {new Date().getFullYear()}
+            © {new Date().getFullYear()} ONEDoggies 🐶
           </Text>
         </Container>
       </Box>
