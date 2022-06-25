@@ -1,6 +1,6 @@
 const OneDoggiesInterface = {
     address: {
-        1337: '0xfbfFDb5ec172AF868585D4308E5e1f0055a83f07'
+      1666600000: '0xb64f90c7F51474412c79B36d586f345807a07E08'
     },
     abi: [
       {
